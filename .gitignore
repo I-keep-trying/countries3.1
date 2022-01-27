@@ -15,4 +15,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.rest
 
+/src/timeZones.json
+/src/weatherResponseExample.json

@@ -13,7 +13,7 @@
   "rules": {
     "no-case-declarations": 0,
     "react/prop-types": 0,
-    "no-unused-vars": "off",
+    "no-unused-vars": "warn",
     "jsx-a11y/alt-text": "warn",
     "no-irregular-whitespace": 0
   },

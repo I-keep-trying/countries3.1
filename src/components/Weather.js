@@ -6,13 +6,14 @@ import Images from '../images/weather-animated/index'
 import '../assets/css/owm-left.css'
 import '../assets/css/owm-right.css'
 
-function WeatherWidget({ weather, unit, activeItem, country }) {
+function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
   const tempStyle = {
     fontSize: '12px',
     stroke: 'rgb(51, 51, 51)',
     fill: 'rgb(51, 51, 51)',
   }
 
+  const currTime = new Date(timeDate)
   const code = weather.current.weather[0].icon
   const icon = Images[code].path
 
@@ -105,8 +106,20 @@ function WeatherWidget({ weather, unit, activeItem, country }) {
   ) : (
     <div>
       <div className="widget-left-menu widget-left-menu--brown">
+        <div className="widget-left-menu__layout" style={{ paddingLeft: 20 }}>
+          <h3>Current Date and Time in {country.capital}</h3>
+        </div>
+      </div>
+      <Segment
+        style={{ margin: 0, border: 0, boxShadow: 'none' }}
+        floated="left"
+      >
+        <span className="calendar__item">{timeDate}</span>
+      </Segment>
+      <div className="widget-left-menu widget-left-menu--brown">
         <div className="widget-left-menu__layout">
-          <h2 className="widget-left-menu__header">{country.capital} </h2>
+          <h2 className="widget-left-menu__header">{country.capital}</h2>
+
           <a
             href="https://openweathermap.org/"
             target="_blank"

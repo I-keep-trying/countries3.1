@@ -1,22 +1,19 @@
-import React, { useRef } from 'react'
-import { Menu, Icon, Input } from 'semantic-ui-react'
+import React, { useRef, useState } from 'react'
+import { Menu, Icon, Input, Button } from 'semantic-ui-react'
 import '../assets/css/App.css'
 //import { isMobile } from 'react-device-detect'
 
 const HeaderNav = ({
-  // visible,
-  //reset,
-  //setMenu,
-  //  visibilityToggle,
   input,
   setInput,
-  countries,
   isLoading,
   setIsLoading,
   setRegion,
   setActiveRegion,
   setSubRegion,
   setActiveSubregion,
+  unit,
+  handleUnitButtonClick,
 }) => {
   const inputRef = useRef()
 
@@ -29,21 +26,12 @@ const HeaderNav = ({
   }
 
   const handleChange = (e) => {
-    if (countries.length === 1) {
-      setRegion('All')
-      setSubRegion('')
-    }
     if (!inputRef.current) {
       inputRef.current = e.target
     }
 
     !isLoading ? setIsLoading(true) : isLoading
     setInput(e.target.value)
-  }
-
-  if (countries.length === 1) {
-    setRegion(countries[0].region)
-    setSubRegion(countries[0].subregion)
   }
 
   /*   const closeMobileMenu = () => {
@@ -54,7 +42,7 @@ const HeaderNav = ({
 
   return (
     <>
-      <Menu inverted fixed="top" borderless>
+      <Menu id='nav menu' attached="top" inverted borderless>
         <Menu.Item style={{ padding: 0 }} header>
           {/*           {isMobile ? (
             <>
@@ -99,7 +87,39 @@ const HeaderNav = ({
             />
           )}
         </Menu.Item>
-        <Menu.Menu position="right"></Menu.Menu>
+        <Menu.Item
+          position="right"
+          /*   style={{
+            padding: 0,
+          }} */
+        >
+          <Button.Group>
+            <Button
+              size="medium"
+              basic={unit === 'metric' ? false : true}
+              // color="black"
+              inverted
+              color="teal"
+              onClick={handleUnitButtonClick}
+              style={{ padding: 4 }}
+            >
+              Metric
+            </Button>
+            <Button
+              size="medium"
+              basic={unit === 'metric' ? true : false}
+              //  color="black"
+              inverted
+              color="teal"
+              onClick={handleUnitButtonClick}
+              style={{ padding: 4 }}
+            >
+              Imperial
+            </Button>
+          </Button.Group>
+        </Menu.Item>
+        {/*         <Menu.Menu position="right"></Menu.Menu>
+         */}{' '}
       </Menu>
     </>
   )

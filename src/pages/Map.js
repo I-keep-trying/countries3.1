@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import H from '@here/maps-api-for-javascript'
 import onResize from 'simple-element-resize-detector'
+import MapPosition from './MapPosition'
 
-const Map = ({ lat, lng }) => {
+const Map = ({ lt, lg, zm }) => {
   const [map, setMap] = useState(null)
-  const [state, setState] = useState({
-    zoom: 4,
-    lat: lat,
-    lng: lng,
-  })
-  console.log('Map props lat, lng', lat, ', ', lng)
+
   const mapUseRef = useRef()
 
   useEffect(() => {
@@ -22,8 +18,8 @@ const Map = ({ lat, lng }) => {
       setMap(
         new H.Map(mapUseRef.current, layers.vector.normal.map, {
           pixelRatio: window.devicePixelRatio,
-          center: { lat: lat, lng: lng },
-          zoom: state.zoom,
+          center: { lat: lt, lng: lg },
+          zoom: zm,
         })
       )
     } else {
@@ -31,18 +27,20 @@ const Map = ({ lat, lng }) => {
       onResize(mapUseRef.current, () => {
         map.getViewPort().resize()
       })
+      // add zoom and pan
+      setTimeout(() => {
+        map.setZoom(zm)
+        map.setCenter({ lat: lt, lng: lg })
+      }, 100)
+    }
+  }, [map])
 
-      map.setZoom(state.zoom)
-      map.setCenter({ lat: state.lat, lng: state.lng })
-
-      // add the interactive behaviour to the map
-      mapUseRef.current.addEventListener('mapviewchange', (e) => e)
+  useEffect(() => {
+    // interactive feature i.e. scroll zoom & pan
+    if (map) {
       new H.mapevents.Behavior(new H.mapevents.MapEvents(map))
     }
-    return () => {
-      mapUseRef.current.removeEventListener('mapviewchange', (e) => e)
-    }
-  }, [map, state])
+  }, [map])
 
   return (
     <>

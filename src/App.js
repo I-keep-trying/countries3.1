@@ -1,19 +1,17 @@
 import React from 'react'
-import { Container } from 'semantic-ui-react'
+import { Segment } from 'semantic-ui-react'
 // import { isMobile } from 'react-device-detect'
 import './App.css'
 import Countries from './pages/Countries'
-import Map from './pages/Map'
-// import CountriesMobile from './pages/CountriesMobile'
+import countriesData from './countriesList'
 
 function App() {
   return (
     <>
-      <Container fluid>
-        {/*    <Map /> */}
-        <Countries />
-        {/* {isMobile ? <CountriesMobile /> : <Countries />} */}
-      </Container>
+      {/*  <Segment.Group style={{ padding: 0, border: 0 }}>
+        <Countries countriesData={countriesData} />
+      </Segment.Group> */}
+      <Countries countriesData={countriesData} />
     </>
   )
 }

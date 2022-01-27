@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import {
-  Divider,
   Menu,
   Container,
   Icon,
   Image,
   Button,
   Card,
-  Popup,
-  Grid,
-  Header,
-  Item,
   Breadcrumb,
 } from 'semantic-ui-react'
-import countriesApiData from '../all-countries'
 import axios from 'axios'
 import Weather from '../components/Weather'
 import Map from './Map'
+import timeZones from '../timeZones'
+import countriesApiData from '../all-countries'
 import '../assets/css/owm-right.css'
 
 const Country = ({
   flag,
   country,
+  location,
   setCountry,
   region,
   subregion,
@@ -33,27 +30,19 @@ const Country = ({
   setActiveRegion,
   setActiveSubregion,
   reset,
+  unit,
 }) => {
-  const [unit, setUnit] = useState('metric')
   const [weather, setWeather] = useState({})
-  const [activeTab, setActiveTab] = useState('Flag')
-  const [location, setLocation] = useState({})
+  const [activeTab, setActiveTab] = useState('Weather')
   const [isWeatherLoading, setIsWeatherLoading] = useState(true)
-  console.log('country', country.latlng)
-  useEffect(() => {
-    // Get location coords of country capital, to use for weather
-    axios
-      .get(
-        `https://geocode.search.hereapi.com/v1/geocode?q=${country.capital},${country.name}&apiKey=${process.env.REACT_APP_HERE_KEY}`
-      )
-      .then((res) => {
-        setLocation(res.data.items[0].position)
-      })
-  }, [country])
+  const [zoom, setZoom] = useState(0)
+  const [timeZone, setTimeZone] = useState('Asia/Jakarta')
+  const [timeDate, setTimeDate] = useState('time zone error')
 
+  /* ------------------- get weather data from api------------------------ */
   useEffect(() => {
     if (Object.entries(location).length > 0) {
-      const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${location.lat}&lon=${location.lng}&exclude=minutely,hourly&appid=${process.env.REACT_APP_OPENWEATHER_KEY}&units=${unit}`
+      const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${location[0]}&lon=${location[1]}&exclude=minutely,hourly&appid=${process.env.REACT_APP_OPENWEATHER_KEY}&units=${unit}`
 
       if (
         unit === 'metric' &&
@@ -101,33 +90,161 @@ const Country = ({
     }
   }, [location, unit])
 
+  useMemo(() => {
+    const url = `http://api.timezonedb.com/v2.1/get-time-zone?key=${process.env.REACT_APP_TIMEZONE} &format=json&by=position&lat=${location[0]}&lng=${location[1]}`
+    axios.get(url).then((response) => {
+      setTimeZone(response.data.zoneName)
+    })
+  })
+
+  useMemo(() => {
+    const d = new Date()
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: timeZone,
+      timeZoneName: 'short',
+    }
+    setTimeDate(d.toLocaleString(window.navigator.language, options))
+  }, [timeZone])
+  
+  /* --------------------time/date format options--------------------- */
+  /*   const intlDate = new Intl.DateTimeFormat('en', {
+    timeZone: timeZone, // ex: Asia/Jakarta
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    weekday: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    second: '2-digit',
+    timeZoneName: 'short',
+  }).format(new Date())
+  console.log('intlDate', intlDate) // Thursday, 01/27/2022, 22:53:27 GMT+7
+ */
+
+  /* --------------------initial zoom levels--------------------------- */
+  // determine initial zoom level based on country size/area
+  const zoomLevel = () => {
+    switch (true) {
+      case country.name === 'Antarctica':
+        setZoom(2)
+        break
+      case country.name === 'British Indian Ocean Territory':
+        setZoom(4)
+        break
+      case country.name === 'French Guiana' ||
+        country.name === 'Switzerland' ||
+        country.name === 'Congo' ||
+        country.name === 'Spain' ||
+        country.name === 'Central African Republic' ||
+        country.name === 'France':
+        setZoom(5)
+        break
+      case country.name === 'Oman' ||
+        country.capital === 'Yamoussoukro' ||
+        country.name === 'Germany' ||
+        country.name === 'Indonesia' ||
+        country.name === 'Congo (Democratic Republic of the)':
+        setZoom(5.5)
+        break
+      case country.name === 'Mozambique':
+        setZoom(6)
+        break
+      case country.name === 'Palestine, State of' ||
+        country.name === 'Dominican Republic' ||
+        country.name === 'Croatia' ||
+        country.name === 'Togo' ||
+        country.name === 'Azerbaijan' ||
+        country.name === 'Serbia' ||
+        country.name === 'Jordan' ||
+        country.name === 'Honduras' ||
+        country.name === 'Nicaragua' ||
+        country.name === 'Suriname':
+        setZoom(6.5)
+        break
+      case country.name === 'Bonaire, Sint Eustatius and Saba' ||
+        country.name === 'Virgin Islands (U.S.)' ||
+        country.name === 'Barbados' ||
+        country.name === 'Saint Lucia' ||
+        country.name === 'Montenegro' ||
+        country.name === 'Saint Helena, Ascension and Tristan da Cunha':
+        setZoom(7)
+        break
+      case country.name === 'Pitcairn' ||
+        country.name === 'Mayotte' ||
+        country.name === 'Martinique' ||
+        country.name === 'Guadeloupe' ||
+        country.name === 'Bahrain' ||
+        country.name === 'Réunion' ||
+        country.name === 'South Georgia and the South Sandwich Islands':
+        setZoom(7.5)
+        break
+      case country.name === 'Antigua and Barbuda' ||
+        country.name === 'Åland Islands':
+        setZoom(8)
+        break
+      case country.name === 'Curaçao' || country.name === 'Isle of Man':
+        setZoom(9)
+        break
+      case country.name === 'Guernsey' ||
+        country.name === 'Jersey' ||
+        country.name === 'Saint Barthélemy':
+        setZoom(10)
+        break
+      case country.name === 'Cocos (Keeling) Islands':
+        setZoom(12)
+        break
+      case country.name === 'Nauru' || country.name === 'Tuvalu':
+        setZoom(13)
+        break
+      case country.area < 1:
+        setZoom(14)
+        break
+      case country.area > 2 && country.area < 5.9:
+        setZoom(13)
+        break
+      case country.area > 5.9 && country.area < 52:
+        setZoom(12)
+        break
+      case country.area > 52 && country.area < 55:
+        setZoom(10.5)
+        break
+      case country.area > 55 && country.area < 179:
+        setZoom(7)
+        break
+      case country.area > 179 && country.area < 40000:
+        setZoom(6)
+        break
+      case country.area > 40000 && country.area < 270000:
+        setZoom(5)
+        break
+      case country.area > 270000 && country.area < 9629092:
+        setZoom(4)
+        break
+      case country.area > 9640010 && country.area < 10000000:
+        setZoom(3)
+        break
+      default:
+        setZoom(0)
+        break
+    }
+  }
+
+  /* ---------------------set zoom level--------------------------------- */
+  // set zoom level
+  useEffect(() => {
+    zoomLevel()
+  }, [country])
+
   const handleItemClick = (e, { name }) => {
     setActiveTab(name)
   }
-
-  const getTimeZones = (country) => {
-    const tzEnd = country.timezones.length - 1
-    return country.timezones.length > 1 ? (
-      <Grid.Row style={{ padding: 0 }}>
-        {country.timezones[0]} - {country.timezones[tzEnd]}
-      </Grid.Row>
-    ) : (
-      <>{country.timezones[0]}</>
-    )
-  }
-
-  /*   const getCountryData = countriesApiData.filter((c) => {
-    return c.name.toLowerCase().startsWith(input.toLowerCase())
-  }) */
-
-  /*   const countryLink = (name) => {
-    const countryData = countriesApiData.filter((cd) => {
-      return cd.alpha3Code.toLowerCase().startsWith(name.toLowerCase())
-    })
-    console.log('handleClick:name', name)
-    console.log('countryData', countryData)
-    setCountry(countryData[0].name)
-  } */
 
   const regionLink = () => {
     setCountry(null)
@@ -147,29 +264,9 @@ const Country = ({
     setActiveSubregion(subregion)
   }
 
-  const handleUnitButtonClick = () => {
-    if (unit === 'metric') {
-      setIsWeatherLoading(true)
-      setUnit('imperial')
-      return true
-    }
-    setIsWeatherLoading(true)
-    setUnit('metric')
-    return false
-  }
-
   return !isLoading ? (
     <>
-      <Menu
-        secondary
-        style={{
-          paddingLeft: 10,
-          paddingRight: 10,
-          paddingTop: 40,
-          paddingBottom: 10,
-          marginBottom: 0,
-        }}
-      >
+      <Menu secondary style={{ margin: 0 }}>
         <Breadcrumb size="small" style={{ marginLeft: 10, paddingTop: 4 }}>
           <Breadcrumb.Section
             key="All"
@@ -208,322 +305,58 @@ const Country = ({
             {country.name}
           </Breadcrumb.Section>
         </Breadcrumb>
-        <Menu.Item
-          position="right"
-          style={{
-            padding: 0,
-          }}
-        >
-          <Button.Group attached="bottom">
-            <Button
-              size="medium"
-              basic={unit === 'metric' ? false : true}
-              color="black"
-              onClick={handleUnitButtonClick}
-              style={{ padding: 4 }}
-            >
-              Metric
-            </Button>
-            <Button
-              size="medium"
-              basic={unit === 'metric' ? true : false}
-              color="black"
-              onClick={handleUnitButtonClick}
-              style={{ padding: 4 }}
-            >
-              Imperial
-            </Button>
-          </Button.Group>
-        </Menu.Item>
       </Menu>
-
-      <Container fluid style={{ padding: 14 }}>
-        <Menu pointing secondary>
-          <Menu.Item
-            //  active
-            name="Flag"
-            active={activeTab === 'Flag'}
-            onClick={handleItemClick}
-          />
-          {/*    <Menu.Item
-            name="Details"
-            active={activeTab === 'Details'}
-            onClick={handleItemClick}
-          /> */}
-          <Menu.Item
-            name="Map"
-            active={activeTab === 'Map'}
-            onClick={handleItemClick}
-          />
-          <Menu.Item
-            name="Weather"
-            active={activeTab === 'Weather'}
-            onClick={handleItemClick}
-          />
-        </Menu>
-        {activeTab === 'Flag' && !isLoading ? (
-          <Card fluid>
-            <Image src={flag} alt="country flag" />
-          </Card>
-        ) : (
-          <></>
-        )}
-        {/*         {activeTab === 'Details' && !isLoading ? (
-          <Card fluid style={{ margin: 0 }}>
-            <Grid style={{ margin: 0 }} columns={4}>
-              <Grid.Row>
-                <Grid.Column style={{ paddingRight: 4 }}>
-                  <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
-                      <Item.Content>
-                        <Item.Header>Endonym </Item.Header>
-                        <Popup
-                          style={{
-                            borderRadius: 0,
-                            padding: '2em',
-                          }}
-                          hoverable
-                          inverted
-                          aria-label="An endonym (also known as autonym) is a common, internal name for a geographical place, group of people, or a language/dialect, that is used only inside that particular place, group, or linguistic community."
-                          trigger={<Icon name="info circle"></Icon>}
-                        >
-                          <Popup.Content>
-                            <>
-                              An endonym (also known as autonym) is a common,
-                              internal name for a geographical place, group of
-                              people, or a language/dialect, that is used only
-                              inside that particular place, group, or linguistic
-                              community.
-                              <a href="https://en.wikipedia.org/wiki/Endonym_and_exonym">
-                                <Icon name="external" />
-                              </a>
-                            </>
-                          </Popup.Content>
-                        </Popup>
-
-                        <Item.Description>
-                          {country.nativeName}
-                        </Item.Description>
-                      </Item.Content>
-                    </Item>
-                  </Item.Group>
-                </Grid.Column>
-
-                <Grid.Column style={{ paddingLeft: 0 }}>
-                  <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
-                      <Item.Content>
-                        <Item.Header>Capital</Item.Header>
-                        <Item.Description>{country.capital}</Item.Description>
-                      </Item.Content>
-                    </Item>
-                  </Item.Group>
-                </Grid.Column>
-
-                <Grid.Column style={{ paddingRight: 4 }}>
-                  <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
-                      <Item.Content>
-                        <Item.Header>{'Size (Area)'} </Item.Header>
-                        {country.area !== null ? (
-                          <Item.Description>
-                            {unit === 'metric'
-                              ? ` ${country.area.toLocaleString()} km²`
-                              : ` ${Math.round(
-                                  country.area * 1.609
-                                ).toLocaleString()} mi²`}
-                          </Item.Description>
-                        ) : (
-                          <Item.Description>Not provided.</Item.Description>
-                        )}
-                      </Item.Content>
-                    </Item>
-                  </Item.Group>
-                </Grid.Column>
-
-                <Grid.Column>
-                  <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
-                      <Item.Content>
-                        <Item.Header>Population</Item.Header>
-                        <Item.Description>
-                          {country.population.toLocaleString()}
-                        </Item.Description>
-                      </Item.Content>
-                    </Item>
-                  </Item.Group>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-
-            <Divider style={{ margin: 0 }} />
-            <Grid style={{ margin: 0 }} columns={2}>
-              <Grid.Column style={{ paddingRight: 4 }}>
-                <Item.Group relaxed>
-                  <Item style={{ margin: 0 }}>
-                    <Item.Content>
-                      {country.languages.length === 1 ? (
-                        <Item.Header>Language</Item.Header>
-                      ) : (
-                        <Item.Header>Languages</Item.Header>
-                      )}
-                      <Item.Description>
-                        {country.languages.map((lang) => (
-                          <Grid.Row style={{ padding: 0 }} key={lang.name}>
-                            {lang.name}
-                          </Grid.Row>
-                        ))}
-                      </Item.Description>
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0 }}>
-                <Item.Group relaxed>
-                  <Item style={{ margin: 0 }}>
-                    <Item.Content>
-                      <Item.Header>Time Zones</Item.Header>
-                      <Item.Description>
-                        {getTimeZones(country)}
-                      </Item.Description>
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0 }}>
-                <Item.Group relaxed>
-                  <Item style={{ margin: 0 }}>
-                    <Item.Content>
-                      <Item.Header>Bordering Countries</Item.Header>
-                      {country.borders.map((b, i) => {
-                        const countryData = countriesApiData.filter((c) => {
-                          return c.alpha3Code
-                            .toLowerCase()
-                            .startsWith(b.toLowerCase())
-                        })
-                        console.log('index', i, ': border', b)
-                        console.log('countryData', countryData)
-                        return i + 1 === country.borders.length ? (
-                          <Item.Description
-                            onClick={() => alert(countryData[0].name)}
-                          >
-                            {b}
-                          </Item.Description>
-                        ) : (
-                          <Item.Description>
-                            {b}
-                            {', '}
-                          </Item.Description>
-                        )
-                      })}
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-            </Grid>
-            <Divider style={{ margin: 0 }} />
-            <Grid style={{ margin: 0 }} columns={3}>
-              <Grid.Row style={{ paddingLeft: 14, paddingBottom: 0 }}>
-                <Header>Currencies</Header>
-              </Grid.Row>
-
-              <Grid.Column style={{ paddingRight: 4 }}>
-                <Item.Group>
-                  <Item>
-                    <Item.Content>
-                      <Item.Header> Symbol</Item.Header>
-                      <Item.Description>
-                        {country.currencies.map((curr) => (
-                          <Grid.Row
-                            columns={3}
-                            style={{ padding: 0 }}
-                            key={curr.symbol}
-                            as="h2"
-                          >
-                            {curr.symbol}
-                          </Grid.Row>
-                        ))}
-                      </Item.Description>
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0, paddingRight: 0 }}>
-                <Item.Group>
-                  <Item>
-                    <Item.Content>
-                      <Item.Header> Code</Item.Header>
-                      <Item.Description>
-                        {country.currencies.map((curr) => (
-                          <Grid.Row
-                            columns={3}
-                            style={{ padding: 0 }}
-                            key={curr.code}
-                          >
-                            {curr.code}
-                          </Grid.Row>
-                        ))}
-                      </Item.Description>
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0 }}>
-                <Item.Group>
-                  <Item>
-                    <Item.Content>
-                      <Item.Header>Name</Item.Header>
-                      <Item.Description>
-                        {country.currencies.map((curr) => (
-                          <Grid.Row
-                            columns={3}
-                            style={{ padding: 0 }}
-                            key={curr.name}
-                          >
-                            {curr.name}
-                          </Grid.Row>
-                        ))}
-                      </Item.Description>
-                    </Item.Content>
-                  </Item>
-                </Item.Group>
-              </Grid.Column>
-            </Grid>
-          </Card>
-        ) : (
-          <></>
-        )} */}
-        {activeTab === 'Map' && !isLoading ? (
-          <>
-            <Map lat={country.latlng[0]} lng={country.latlng[1]} />
-          </>
-        ) : (
-          <Icon loading name="spinner" />
-        )}
-        {activeTab === 'Weather' && !isLoading ? (
-          <>
-            {!isWeatherLoading && !isLoading ? (
-              <Card fluid style={{ margin: 0 }}>
-                <Weather
-                  weather={weather}
-                  unit={unit}
-                  activeTab={activeTab}
-                  country={country}
-                />
-              </Card>
-            ) : (
-              <Icon loading name="spinner" />
-            )}
-          </>
-        ) : (
-          <></>
-        )}
-      </Container>
+      <Menu pointing secondary style={{ margin: 0 }}>
+        <Menu.Item
+          name="Flag"
+          active={activeTab === 'Flag'}
+          onClick={handleItemClick}
+        />
+        <Menu.Item
+          name="Map"
+          active={activeTab === 'Map'}
+          onClick={handleItemClick}
+        />
+        <Menu.Item
+          name="Weather"
+          active={activeTab === 'Weather'}
+          onClick={handleItemClick}
+        />
+      </Menu>
+      {activeTab === 'Flag' ? (
+        <Image src={flag} alt="country flag" size="large" bordered />
+      ) : (
+        <></>
+      )}
+      {activeTab === 'Map' ? (
+        <>
+          <Map lt={country.latlng[0]} lg={country.latlng[1]} zm={zoom} />
+        </>
+      ) : (
+        <></>
+      )}
+      {activeTab === 'Weather' ? (
+        <>
+          {!isWeatherLoading && !isLoading ? (
+            <Card fluid style={{ margin: 0 }}>
+              <Weather
+                weather={weather}
+                unit={unit}
+                activeTab={activeTab}
+                country={country}
+                timeDate={timeDate}
+              />
+            </Card>
+          ) : (
+            <Icon id="weather" loading name="spinner" />
+          )}
+        </>
+      ) : (
+        <></>
+      )}
     </>
   ) : (
-    <>
-      <Icon loading name="spinner" />
-    </>
+    <>Something went wrong</>
   )
 }
 
