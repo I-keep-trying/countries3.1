@@ -1,19 +1,22 @@
-import React from 'react'
-import { Segment } from 'semantic-ui-react'
-// import { isMobile } from 'react-device-detect'
-import './App.css'
+import React, { useEffect } from 'react'
 import Countries from './pages/Countries'
-import countriesData from './countriesList'
+import { initializeCountries } from './reducers/countryReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 function App() {
-  return (
-    <>
-      {/*  <Segment.Group style={{ padding: 0, border: 0 }}>
-        <Countries countriesData={countriesData} />
-      </Segment.Group> */}
-      <Countries countriesData={countriesData} />
-    </>
-  )
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeCountries())
+  }, [dispatch])
+
+  const countries = useSelector((state) => {
+    //   console.log('state', state)
+    return state.countries.initialCountries
+  })
+  //console.log('state.countries', countries)
+  return countries !== undefined ? <Countries /> : <></>
+  //  return <></> //countries.length > 0 ? <Countries /> : <></>
 }
 
 export default App

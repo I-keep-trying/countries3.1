@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   Container,
   Button,
@@ -6,32 +6,191 @@ import {
   Menu,
   Table,
   Message,
+  Sidebar,
   Segment,
   Icon,
+  Sticky,
 } from 'semantic-ui-react'
-import Country from './CountryMobile'
-import HeaderNav from '../components/Header'
+import { isMobile } from 'react-device-detect'
+import Country from './Country'
+import HeaderNav from '../components/HeaderMobile'
 import countriesApiData from '../all-countries'
-import countriesBasicInfo from '../countriesList'
 import regions from '../regions'
+import useSortableData from '../services/sortableTable'
+import './countries.css'
 
-const Countries = () => {
+const COUNTRIES_HEADERS = [
+  { fieldName: 'ID', id: 'id' },
+  { fieldName: 'Flag', id: 'flag' },
+  { fieldName: 'Name', id: 'name' },
+  { fieldName: 'Capital', id: 'capital' },
+  { fieldName: 'Region', id: 'region' },
+  { fieldName: 'Subregion', id: 'subregion' },
+  { fieldName: 'Population', id: 'population' },
+  { fieldName: 'Area km²', id: 'area' },
+  { fieldName: 'Gini Index', id: 'gini' },
+]
+
+/* const CountriesTable = (props) => {
+  const { input, setIsLoading, setCountry, setInput, activeRegion, unit } =
+    props
+  const { items, requestSort } = useSortableData(props.filterBySubregion)
+
+  const getCountryData = countriesApiData.filter((c) => {
+    return c.name.toLowerCase().startsWith(input.toLowerCase())
+  })
+
+  // handle click to select a country
+  const handleClick = (name) => {
+    const countryData = getCountryData.filter((cd) => {
+      return cd.name.toLowerCase() === name.toLowerCase()
+    })
+    setIsLoading(true)
+    setCountry(countryData[0])
+    setInput(countryData[0].name)
+  }
+
+  const marg1 = activeRegion === 'All' ? 85 : 130
+
+  const areaLabel = unit === 'imperial' ? 'Area mi²' : 'Area km²'
+
+  return (
+    <>
+      <Table
+        id="Table"
+        sortable
+        compact
+        selectable
+        unstackable
+        //     collapsing
+        size="small"
+        style={{ border: 0 }}
+      >
+        <Table.Header id="Table.Header" style={{ top: marg1 }}>
+          <Table.Row>
+            {COUNTRIES_HEADERS.map(({ fieldName, id }) =>
+              fieldName !== 'ID' ? (
+                id === window.localStorage.getItem('sort key') ? (
+                  <Table.HeaderCell key={id} onClick={() => requestSort(id)}>
+                    {fieldName === 'Area km²' ? areaLabel : fieldName}
+                    {window.localStorage.getItem('direction') ===
+                    'ascending' ? (
+                      <Icon name="caret up" />
+                    ) : (
+                      <Icon name="caret down" />
+                    )}
+                  </Table.HeaderCell>
+                ) : (
+                  <Table.HeaderCell key={id} onClick={() => requestSort(id)}>
+                    {fieldName === 'Area km²' ? areaLabel : fieldName}
+                  </Table.HeaderCell>
+                )
+              ) : null
+            )}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {items.map(
+            ({
+              id,
+              flag,
+              name,
+              region,
+              subregion,
+              capital,
+              population,
+              area,
+              gini,
+            }) => {
+              const areaConvert = Math.round(area / 2.59)
+              return (
+                <Table.Row key={id} onClick={() => handleClick(name)}>
+                  <Table.Cell
+                  //width="two"
+                  >
+                    <Image
+                      size={isMobile ? 'mini' : 'tiny'}
+                      src={flag}
+                      alt="country flag"
+                      bordered
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{name}</Table.Cell>
+                  <Table.Cell>{capital}</Table.Cell>
+                  <Table.Cell>{region}</Table.Cell>
+                  <Table.Cell>{subregion}</Table.Cell>
+                  <Table.Cell>{population.toLocaleString()}</Table.Cell>
+                  <Table.Cell>
+                    {unit === 'imperial'
+                      ? areaConvert.toLocaleString()
+                      : area.toLocaleString()}
+                  </Table.Cell>
+                  <Table.Cell>{gini}</Table.Cell>
+                </Table.Row>
+              )
+            }
+          )}
+        </Table.Body>
+      </Table>
+    </>
+  )
+}
+ */
+
+/*    const CountriesTable = () => (
+    <Segment
+      style={
+        menu === false && visible === false
+          ? { padding: 0, marginTop: 47 }
+          : { padding: 0, marginTop: 0 }
+      }
+    >
+      <Table selectable stackable>
+        <Table.Header>
+          <Table.Row>Countries</Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {filterBySubregion.map((c) => {
+            return (
+              <>
+                <Table.Row key={c.id} onClick={() => handleClick(c)}>
+                  <Table.Cell width="two">
+                    <Image
+                      size="tiny"
+                      src={c.flag}
+                      alt="country flag"
+                      bordered
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{c.name}</Table.Cell>
+                </Table.Row>
+              </>
+            )
+          })}
+        </Table.Body>
+      </Table>
+    </Segment>
+  ) */
+
+const Countries = ({ countriesData }) => {
   const [input, setInput] = useState('')
-  const [region, setRegion] = useState('All')
   const [activeRegion, setActiveRegion] = useState('All')
-  const [subregion, setSubRegion] = useState('')
   const [activeSubregion, setActiveSubregion] = useState('')
-  const [, setCountry] = useState(null)
+  const [region, setRegion] = useState('All')
+  const [subregion, setSubRegion] = useState('')
+  const [country, setCountry] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [unit, setUnit] = useState('metric')
   const [visible, setVisible] = useState(false)
   const [menu, setMenu] = useState(false)
+  const [topMarg, setTopMarg] = useState(45)
 
   // get static lists of regions & subregions for labels on tabs
   const getSubregions = regions.filter((r) => {
     return r.region === activeRegion ? r : ''
   })
 
-  const filteredCountries = countriesBasicInfo.filter((c) => {
+  const filteredCountries = countriesData.filter((c) => {
     return c.name.toLowerCase().startsWith(input.toLowerCase())
   })
 
@@ -54,7 +213,7 @@ const Countries = () => {
 
   // handle click selecting a country
   const handleClick = (c) => {
-    // pass full country details from api data
+    console.log('handleClick c', c)
     const countryData = getCountryData.filter((cd) => {
       return cd.name.toLowerCase().startsWith(c.name.toLowerCase())
     })
@@ -68,6 +227,12 @@ const Countries = () => {
     menu === false ? setMenu(true) : setMenu(false)
   }
 
+  useEffect(() => {
+    if (menu === false) {
+      setTopMarg(45)
+    }
+  }, [menu])
+
   // handle click of a region
   const handleRegionClick = (e, { name }) => {
     setCountry(null)
@@ -75,6 +240,7 @@ const Countries = () => {
     setActiveSubregion('')
     setRegion(name)
     setActiveRegion(name)
+    setTopMarg(132)
     if (name === 'All') {
       menuToggle()
     }
@@ -107,7 +273,7 @@ const Countries = () => {
 
   const NoMatches = () => (
     <Container>
-      <Message compact info>
+      <Message style={{ marginTop: 50, marginLeft: 20 }} compact info>
         <Message.Header>No matches, please try again.</Message.Header>
         <Button basic color="teal" onClick={reset}>
           OK
@@ -116,161 +282,168 @@ const Countries = () => {
     </Container>
   )
 
-  const CountriesTable = () => (
-    <Segment
-      style={
-        menu === false && visible === false
-          ? { padding: 0, marginTop: 47 }
-          : { padding: 0, marginTop: 0 }
-      }
-    >
-      <Table selectable stackable>
-        <Table.Body>
-          {filterBySubregion.map((c) => {
-            return (
-              <>
-                <Table.Row key={c.id} onClick={() => handleClick(c)}>
-                  <Table.Cell width="two">
-                    <Image
-                      size="tiny"
-                      src={c.flag}
-                      alt="country flag"
-                      bordered
-                    />
-                  </Table.Cell>
-                  <Table.Cell>{c.name}</Table.Cell>
-                </Table.Row>
-              </>
-            )
-          })}
-        </Table.Body>
-      </Table>
-    </Segment>
-  )
-
+  const contextRef = useRef()
+  console.log('visible?', visible)
+  console.log('menu?', menu)
   return (
     <>
-      <HeaderNav
-        visible={visible}
-        reset={reset}
-        setMenu={setMenu}
-        visibilityToggle={visibilityToggle}
-        input={input}
-        setInput={setInput}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-        countries={filterBySubregion}
-        setRegion={setRegion}
-        setSubRegion={setSubRegion}
-        setActiveRegion={setActiveRegion}
-        setActiveSubregion={setActiveSubregion}
-      />
-
-      {getCountryData.length === 1 ? (
-        <>
-          <Country
-            flag={filterBySubregion[0].flag}
+      <div id="ref" ref={contextRef}>
+        <Sticky id="Sticky" context={contextRef}>
+          <HeaderNav
+            visible={visible}
             reset={reset}
+            setMenu={setMenu}
+            visibilityToggle={visibilityToggle}
+            input={input}
             setInput={setInput}
-            setRegion={setRegion}
             isLoading={isLoading}
-            country={getCountryData[0]}
-            setCountry={setCountry}
-            region={region}
-            subregion={subregion}
-            setSubRegion={setSubRegion}
             setIsLoading={setIsLoading}
+            countries={filterBySubregion}
+            setRegion={setRegion}
+            setSubRegion={setSubRegion}
             setActiveRegion={setActiveRegion}
             setActiveSubregion={setActiveSubregion}
           />
-        </>
-      ) : (
-        <>
-          <>
-            {visible ? (
-              <>
-                <Menu
-                  vertical
-                  fluid
-                  size="mini"
-                  attached="top"
-                  style={{ marginTop: 45 }}
-                >
-                  {menu === false ? (
-                    <Menu.Item name="All" onClick={reset}>
-                      All Regions
-                      <Icon name="caret right" />
-                    </Menu.Item>
-                  ) : (
+          {filteredCountries.length === 0 ? (
+            <NoMatches />
+          ) : (
+            <>
+              {country !== null && filteredCountries.length === 1 ? (
+                <Country
+                  flag={filterBySubregion[0].flag}
+                  reset={reset}
+                  setInput={setInput}
+                  setRegion={setRegion}
+                  isLoading={isLoading}
+                  country={getCountryData[0]}
+                  location={getCountryData[0].latlng}
+                  setCountry={setCountry}
+                  region={region}
+                  subregion={subregion}
+                  setSubRegion={setSubRegion}
+                  setIsLoading={setIsLoading}
+                  setActiveRegion={setActiveRegion}
+                  setActiveSubregion={setActiveSubregion}
+                  unit={unit}
+                />
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+          {visible ? (
+            <>
+              <Menu
+                vertical
+                fluid
+                size="mini"
+                attached="top"
+                style={{ marginTop: 0 }}
+              >
+                {menu === false ? (
+                  <Menu.Item name="All" onClick={reset}>
+                    All Regions
+                    <Icon name="caret right" />
+                  </Menu.Item>
+                ) : (
+                  <>
+                    {getSubregions[0].subregions.length > 0 ? (
+                      <>
+                        <Menu.Item name="All" onClick={reset}>
+                          All Regions
+                        </Menu.Item>
+                        <Menu.Item
+                          header
+                          name={activeRegion}
+                          onClick={handleRegionClick}
+                        >
+                          {activeRegion}{' '}
+                        </Menu.Item>
+                        {activeSubregion === '' ? (
+                          <>
+                            {getSubregions[0].subregions.map((rs) => (
+                              <Menu.Item
+                                key={rs}
+                                name={rs}
+                                active={activeSubregion === rs}
+                                onClick={handleSubregionClick}
+                              />
+                            ))}{' '}
+                          </>
+                        ) : (
+                          <>
+                            <Menu.Item header>{activeSubregion} </Menu.Item>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {regions.map((r) => (
+                          <>
+                            {r.region === 'All' ? (
+                              <Menu.Item
+                                key={r.id}
+                                name={r.region}
+                                active={activeRegion === r.region}
+                                onClick={handleRegionClick}
+                              >
+                                All Regions
+                                <Icon name="caret down" />
+                              </Menu.Item>
+                            ) : (
+                              <Menu.Item
+                                key={r.id}
+                                name={r.region}
+                                active={activeRegion === r.region}
+                                onClick={handleRegionClick}
+                              >
+                                {r.region}
+                              </Menu.Item>
+                            )}
+                          </>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </Menu>
+            </>
+          ) : (
+            <></>
+          )}
+        </Sticky>
+        <Segment attached="bottom" style={{ padding: 0, border: 0 }}>
+          {country === null ? (
+            <Table selectable unstackable>
+              <Table.Header id="Table.Header" style={{ top: topMarg }}>
+                <Table.Row>
+                  <Table.HeaderCell>Flag</Table.HeaderCell>
+                  <Table.HeaderCell>Country</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {filterBySubregion.map((c) => {
+                  return (
                     <>
-                      {getSubregions[0].subregions.length > 0 ? (
-                        <>
-                          <Menu.Item name="All" onClick={reset}>
-                            All Regions
-                          </Menu.Item>
-                          <Menu.Item
-                            header
-                            name={activeRegion}
-                            onClick={handleRegionClick}
-                          >
-                            {activeRegion}{' '}
-                          </Menu.Item>
-                          {activeSubregion === '' ? (
-                            <>
-                              {getSubregions[0].subregions.map((rs) => (
-                                <Menu.Item
-                                  key={rs}
-                                  name={rs}
-                                  active={activeSubregion === rs}
-                                  onClick={handleSubregionClick}
-                                />
-                              ))}{' '}
-                            </>
-                          ) : (
-                            <>
-                              <Menu.Item header>{activeSubregion} </Menu.Item>
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {regions.map((r) => (
-                            <>
-                              {r.region === 'All' ? (
-                                <Menu.Item
-                                  key={r.id}
-                                  name={r.region}
-                                  active={activeRegion === r.region}
-                                  onClick={handleRegionClick}
-                                >
-                                  All Regions
-                                  <Icon name="caret down" />
-                                </Menu.Item>
-                              ) : (
-                                <Menu.Item
-                                  key={r.id}
-                                  name={r.region}
-                                  active={activeRegion === r.region}
-                                  onClick={handleRegionClick}
-                                >
-                                  {r.region}
-                                </Menu.Item>
-                              )}
-                            </>
-                          ))}
-                        </>
-                      )}
+                      <Table.Row key={c.id} onClick={() => handleClick(c)}>
+                        <Table.Cell>
+                          <Image
+                            size="tiny"
+                            src={c.flag}
+                            alt="country flag"
+                            bordered
+                          />
+                        </Table.Cell>
+                        <Table.Cell>{c.name}</Table.Cell>
+                      </Table.Row>
                     </>
-                  )}
-                </Menu>
-              </>
-            ) : (
-              <></>
-            )}
-          </>
-          {filterBySubregion.length === 0 ? <NoMatches /> : <CountriesTable />}
-        </>
-      )}
+                  )
+                })}
+              </Table.Body>
+            </Table>
+          ) : null}
+        </Segment>
+      </div>
     </>
   )
 }

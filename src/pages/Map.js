@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import H from '@here/maps-api-for-javascript'
 import onResize from 'simple-element-resize-detector'
-import MapPosition from './MapPosition'
 
 const Map = ({ lt, lg, zm }) => {
   const [map, setMap] = useState(null)

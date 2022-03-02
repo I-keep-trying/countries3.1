@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { isMobile, isTablet } from 'react-device-detect'
 import { Segment } from 'semantic-ui-react'
 import moment from 'moment'
@@ -6,14 +7,36 @@ import Images from '../images/weather-animated/index'
 import '../assets/css/owm-left.css'
 import '../assets/css/owm-right.css'
 
-function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
+function WeatherWidget({ country }) {
+  const [timeDate, setTimeDate] = useState('time zone error')
+
+  const unit = useSelector((state) => state.unit.unit)
+
+  const weather = useSelector((state) => state.weather)
+
+  const timeZone = useSelector((state) => state.time)
+
+  useMemo(() => {
+    const d = new Date()
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: timeZone.zoneName,
+      timeZoneName: 'short',
+    }
+    setTimeDate(d.toLocaleString(window.navigator.language, options))
+  }, [])
+
   const tempStyle = {
     fontSize: '12px',
     stroke: 'rgb(51, 51, 51)',
     fill: 'rgb(51, 51, 51)',
   }
 
-  const currTime = new Date(timeDate)
   const code = weather.current.weather[0].icon
   const icon = Images[code].path
 
@@ -67,7 +90,7 @@ function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
                     <td className="weather-right__item">Wind</td>
                     <td className="weather-right__item">
                       {Math.round(weather.current.wind_speed)}
-                      {activeItem === 'metric' ? 'm/s' : 'mph'}
+                      {unit === 'metric' ? 'm/s' : 'mph'}
                     </td>
                   </tr>
                   <tr className="weather-right-card__items">
@@ -107,7 +130,7 @@ function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
     <div>
       <div className="widget-left-menu widget-left-menu--brown">
         <div className="widget-left-menu__layout" style={{ paddingLeft: 20 }}>
-          <h3>Current Date and Time in {country.capital}</h3>
+          <h3>Current Date and Time in {country.capital[0]}</h3>
         </div>
       </div>
       <Segment
@@ -118,7 +141,7 @@ function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
       </Segment>
       <div className="widget-left-menu widget-left-menu--brown">
         <div className="widget-left-menu__layout">
-          <h2 className="widget-left-menu__header">{country.capital}</h2>
+          <h2 className="widget-left-menu__header">{country.capital[0]}</h2>
 
           <a
             href="https://openweathermap.org/"
@@ -138,7 +161,7 @@ function WeatherWidget({ weather, unit, activeItem, country, timeDate }) {
             <img
               style={{ width: 100, height: 100 }}
               src={icon}
-              alt={`Weather in ${country.name}`}
+              alt={`Weather in ${country.name.common}`}
               className="weather-left-card__img"
             />
             <div className="weather-left-card__col">

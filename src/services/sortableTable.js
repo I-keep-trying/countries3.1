@@ -6,41 +6,55 @@ const useSortableData = (items) => {
     direction: 'ascending',
   })
 
+  // set initial sort
+  window.localStorage.setItem('sort key', sortConfig.key)
+  window.localStorage.setItem('direction', sortConfig.direction)
+
+  // set expiration for local storage to clear
+  const now = new Date().getTime()
+  const setupTime = localStorage.getItem('setupTime')
+  if (setupTime == null) {
+    localStorage.setItem('setupTime', now)
+  } else {
+    if (now - setupTime > 1 * 60 * 60 * 1000) {
+      localStorage.clear()
+      localStorage.setItem('setupTime', now)
+    }
+  }
+
   const sortedItems = useMemo(() => {
     let sortableItems = [...items]
-
-    return sortableItems.sort((a, b) => {
-      if (window.localStorage.getItem('direction') === null) {
-        if (isNaN(a[sortConfig.key]) === true) {
-          return sortConfig.direction === 'ascending'
-            ? a[sortConfig.key].localeCompare(b[sortConfig.key])
-            : b[sortConfig.key].localeCompare(a[sortConfig.key])
-        } else {
-          if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1
-          }
-          if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1
-          }
+    if (sortConfig.key === 'area' || sortConfig.key === 'population') {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1
         }
-      } else {
-        const storedKey = window.localStorage.getItem('sort key')
-        const storedDir = window.localStorage.getItem('direction')
-
-        if (isNaN(a[storedKey]) === true) {
-          return storedDir === 'ascending'
-            ? a[storedKey].localeCompare(b[storedKey])
-            : b[storedKey].localeCompare(a[storedKey])
-        } else {
-          if (a[storedKey] < b[storedKey]) {
-            return storedDir === 'ascending' ? -1 : 1
-          }
-          if (a[storedKey] > b[storedKey]) {
-            return storedDir === 'ascending' ? 1 : -1
-          }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1
         }
-      }
-    })
+        return 0
+      })
+    } else if (sortConfig.key === 'name') {
+      sortableItems.sort((a, b) => {
+        return sortConfig.direction === 'ascending'
+          ? a[sortConfig.key].common.localeCompare(b[sortConfig.key].common)
+          : b[sortConfig.key].common.localeCompare(a[sortConfig.key].common)
+      })
+    } else if (sortConfig.key === 'capital') {
+      sortableItems.sort((a, b) => {
+        return sortConfig.direction === 'ascending'
+          ? a[sortConfig.key][0].localeCompare(b[sortConfig.key][0])
+          : b[sortConfig.key][0].localeCompare(a[sortConfig.key][0])
+      })
+    } else {
+      sortableItems.sort((a, b) => {
+        return a[sortConfig.key] && sortConfig.direction === 'ascending'
+          ? a[sortConfig.key].localeCompare(b[sortConfig.key])
+          : b[sortConfig.key].localeCompare(a[sortConfig.key])
+      })
+    }
+
+    return sortableItems
   }, [items, sortConfig])
 
   const requestSort = (key) => {
@@ -50,7 +64,8 @@ const useSortableData = (items) => {
     window.localStorage.setItem('sort key', key)
     window.localStorage.setItem('direction', direction)
   }
-  return { items: sortedItems, requestSort, sortConfig }
+
+  return { items: sortedItems, requestSort }
 }
 
 export default useSortableData
