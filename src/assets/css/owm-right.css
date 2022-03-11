@@ -849,6 +849,17 @@
   width: auto;
   letter-spacing: -5px;
 }
+.weather-right__temperatureMobile {
+  font-weight: 600;
+  font-size: 60px;
+  line-height: 1;
+  font-family: 'Oswald', Arial, sans-serif !important;
+  color: #333;
+  width: auto;
+  letter-spacing: -5px;
+  margin-right: 2.5rem;
+  margin-left: 1rem;
+}
 .weather-right__layout {
   position: relative;
   padding: 6.5px 0;
@@ -872,8 +883,10 @@
   font-family: 'Roboto', Arial, sans-serif !important;
   color: #333;
   text-align: left;
+  border-collapse: collapse;
 }
 .weather-right__item {
+  border-style: none;
   padding: 2px 0;
 }
 .weather-right__item:first-child {
@@ -1024,7 +1037,7 @@
   min-height: 5.625rem;
 }
 .widget-right__title {
-  max-width: 10rem;
+  max-width: 14rem;
   font-weight: 600;
   font-size: 1.125rem;
   line-height: 1;

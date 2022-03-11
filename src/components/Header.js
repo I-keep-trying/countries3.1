@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector, connect } from 'react-redux'
-import { Menu, Icon, Input, Button } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
-  toggleUnit,
-  searchCountries,
-} from '../reducers/countryReducer'
-
+  Menu,
+  Icon,
+  Input,
+  Button,
+  Container,
+  Message,
+} from 'semantic-ui-react'
+import { toggleUnit, searchCountries } from '../reducers/countryReducer'
 import '../assets/css/App.css'
 
 const HeaderNav = () => {
+  console.log('Desktop')
   const [value, setValue] = useState('')
   const unit = useSelector((state) => state.unit.unit)
 
-  const reset = useSelector((state) => state.countries.filter.reset)
-
-  useEffect(() => {
-    if (reset) {
-      setValue('')
-    }
-  }, [reset])
+  const state = useSelector((state) => state)
 
   const dispatch = useDispatch()
 
   const handleInput = (e) => {
     e.preventDefault()
     const input = e.target.value
-    console.log('Header input', input)
     dispatch(searchCountries(input))
     setValue(input)
   }
+
+  const noMatch =
+    state.countries.filtered.length === 0 && state.countries.filter.input !== ''
 
   const clearInput = () => {
     dispatch(searchCountries(''))
@@ -42,9 +42,9 @@ const HeaderNav = () => {
   return (
     <>
       <Menu id="nav menu" attached="top" inverted borderless>
-        <Menu.Item style={{ padding: 0 }} header>
+        <Menu.Item header>
           <Icon className="App-logo" name="globe" color="teal" size="big" />
-          <p> World Countries</p>
+          <p> World Countries </p>
         </Menu.Item>
         <Menu.Item>
           <Input
@@ -69,7 +69,6 @@ const HeaderNav = () => {
               inverted
               color="teal"
               onClick={() => changeUnit('metric')}
-              style={{ padding: 4 }}
             >
               Metric
             </Button>
@@ -79,15 +78,26 @@ const HeaderNav = () => {
               inverted
               color="teal"
               onClick={() => changeUnit('imperial')}
-              style={{ padding: 4 }}
             >
               Imperial
             </Button>
           </Button.Group>
         </Menu.Item>
       </Menu>
+      {noMatch ? (
+        <Container>
+          <Message compact info>
+            <Message.Header>No matches, please try again.</Message.Header>
+            <Button basic color="teal" onClick={clearInput}>
+              OK
+            </Button>
+          </Message>
+        </Container>
+      ) : (
+        <></>
+      )}
     </>
   )
 }
 
-export default connect(null, { searchCountries })(HeaderNav)
+export default HeaderNav

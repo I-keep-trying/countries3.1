@@ -27,15 +27,14 @@ const Country = ({
   setInput,
   setRegion,
   setSubRegion,
-  setIsLoading,
   setActiveRegion,
   setActiveSubregion,
   reset,
 }) => {
   const [unit, setUnit] = useState('metric')
-  const [weather, setWeather] = useState({})
+  const [weather, ] = useState({})
   const [activeTab, setActiveTab] = useState('Flag')
-  const [location, setLocation] = useState({})
+  const [, setLocation] = useState({})
   const [isWeatherLoading, setIsWeatherLoading] = useState(true)
 
   useEffect(() => {
@@ -49,7 +48,7 @@ const Country = ({
       })
   }, [country])
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (Object.entries(location).length > 0) {
       const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${location.lat}&lon=${location.lng}&exclude=minutely,hourly&appid=${process.env.REACT_APP_OPENWEATHER_KEY}&units=${unit}`
 
@@ -98,7 +97,7 @@ const Country = ({
       }
     }
   }, [location, unit])
-
+ */
   const handleItemClick = (e, { name }) => {
     setActiveTab(name)
   }
@@ -106,7 +105,9 @@ const Country = ({
   const getTimeZones = (country) => {
     const tzEnd = country.timezones.length - 1
     return country.timezones.length > 1 ? (
-      <Grid.Row style={{ padding: 0 }}>
+      <Grid.Row 
+      //style={{ padding: 0 }}
+      >
         {country.timezones[0]} - {country.timezones[tzEnd]}
       </Grid.Row>
     ) : (
@@ -147,18 +148,20 @@ const Country = ({
     <>
       <Menu
         secondary
-        style={{
+      /*   style={{
           paddingLeft: 10,
           paddingRight: 10,
           paddingTop: 40,
           paddingBottom: 10,
           marginBottom: 0,
-        }}
+        }} */
       >
-        <Breadcrumb size="mini" style={{ paddingLeft: 3, paddingTop: 4 }}>
+        <Breadcrumb size="mini" 
+        //style={{ paddingLeft: 3, paddingTop: 4 }}
+        >
           <Breadcrumb.Section
             key="All"
-            style={{ cursor: 'pointer' }}
+        //    style={{ cursor: 'pointer' }}
             link
             onClick={reset}
           >
@@ -167,7 +170,7 @@ const Country = ({
           <Breadcrumb.Divider icon="right chevron" />
           <Breadcrumb.Section
             key={country.region}
-            style={{ cursor: 'pointer' }}
+          //  style={{ cursor: 'pointer' }}
             link
             onClick={regionLink}
           >
@@ -178,7 +181,7 @@ const Country = ({
               <Breadcrumb.Divider icon="right chevron" />
               <Breadcrumb.Section
                 key={country.subregion}
-                style={{ cursor: 'pointer' }}
+           //     style={{ cursor: 'pointer' }}
                 link
                 onClick={subregionLink}
               >
@@ -195,9 +198,7 @@ const Country = ({
         </Breadcrumb>
         <Menu.Item
           position="right"
-          style={{
-            padding: 0,
-          }}
+       //   style={{ padding: 0 }}
         >
           <Button.Group attached="bottom">
             <Button
@@ -205,7 +206,7 @@ const Country = ({
               basic={unit === 'metric' ? false : true}
               color="black"
               onClick={handleUnitButtonClick}
-              style={{ padding: 4 }}
+      //        style={{ padding: 4 }}
             >
               Metric
             </Button>
@@ -214,7 +215,7 @@ const Country = ({
               basic={unit === 'metric' ? true : false}
               color="black"
               onClick={handleUnitButtonClick}
-              style={{ padding: 4 }}
+          //    style={{ padding: 4 }}
             >
               Imperial
             </Button>
@@ -222,7 +223,9 @@ const Country = ({
         </Menu.Item>
       </Menu>
 
-      <Container fluid style={{ padding: 4 }}>
+      <Container fluid 
+      //style={{ padding: 4 }}
+      >
         <Menu pointing secondary>
           <Menu.Item
             //  active
@@ -249,18 +252,27 @@ const Country = ({
           <></>
         )}
         {activeTab === 'Details' && !isLoading ? (
-          <Card fluid style={{ margin: 0 }}>
-            <Grid style={{ margin: 0 }} columns={2}>
+          <Card fluid 
+          //style={{ margin: 0 }}
+          >
+            <Grid 
+           // style={{ margin: 0 }} 
+            columns={2}
+            >
               <Grid.Row>
-                <Grid.Column style={{ paddingRight: 4 }}>
+                <Grid.Column 
+                //style={{ paddingRight: 4 }}
+                >
                   <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
+                    <Item 
+                    //style={{ margin: 0 }}
+                    >
                       <Item.Content>
                         <Popup
-                          style={{
+                        /*   style={{
                             borderRadius: 0,
                             padding: '2em',
-                          }}
+                          }} */
                           hoverable
                           inverted
                           aria-label="An endonym (also known as autonym) is a common, internal name for a geographical place, group of people, or a language/dialect, that is used only inside that particular place, group, or linguistic community."
@@ -288,9 +300,13 @@ const Country = ({
                   </Item.Group>
                 </Grid.Column>
 
-                <Grid.Column style={{ paddingLeft: 0 }}>
+                <Grid.Column 
+                //style={{ paddingLeft: 0 }}
+                >
                   <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
+                    <Item 
+                    //style={{ margin: 0 }}
+                    >
                       <Item.Content>
                         <Item.Header>Capital</Item.Header>
                         <Item.Description>{country.capital}</Item.Description>
@@ -299,11 +315,17 @@ const Country = ({
                   </Item.Group>
                 </Grid.Column>
               </Grid.Row>
-              <Divider style={{ margin: 0 }} />
+              <Divider 
+            //  style={{ margin: 0 }} 
+              />
               <Grid.Row>
-                <Grid.Column style={{ paddingRight: 4 }}>
+                <Grid.Column 
+             //   style={{ paddingRight: 4 }}
+                >
                   <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
+                    <Item 
+                    //style={{ margin: 0 }}
+                    >
                       <Item.Content>
                         <Item.Header>Size</Item.Header>
                         {country.area !== null ? (
@@ -322,9 +344,13 @@ const Country = ({
                   </Item.Group>
                 </Grid.Column>
 
-                <Grid.Column style={{ paddingLeft: 0 }}>
+                <Grid.Column 
+                //style={{ paddingLeft: 0 }}
+                >
                   <Item.Group relaxed>
-                    <Item style={{ margin: 0 }}>
+                    <Item 
+                    //style={{ margin: 0 }}
+                    >
                       <Item.Content>
                         <Item.Header>Population</Item.Header>
                         <Item.Description>
@@ -337,11 +363,19 @@ const Country = ({
               </Grid.Row>
             </Grid>
 
-            <Divider style={{ margin: 0 }} />
-            <Grid style={{ margin: 0 }} columns={2}>
-              <Grid.Column style={{ paddingRight: 4 }}>
+            <Divider 
+          //  style={{ margin: 0 }}
+             />
+            <Grid 
+         //   style={{ margin: 0 }} 
+            columns={2}>
+              <Grid.Column 
+              //style={{ paddingRight: 4 }}
+              >
                 <Item.Group relaxed>
-                  <Item style={{ margin: 0 }}>
+                  <Item 
+                  //style={{ margin: 0 }}
+                  >
                     <Item.Content>
                       {country.languages.length === 1 ? (
                         <Item.Header>Language</Item.Header>
@@ -350,7 +384,9 @@ const Country = ({
                       )}
                       <Item.Description>
                         {country.languages.map((lang) => (
-                          <Grid.Row style={{ padding: 0 }} key={lang.name}>
+                          <Grid.Row 
+                      //    style={{ padding: 0 }} 
+                          key={lang.name}>
                             {lang.name}
                           </Grid.Row>
                         ))}
@@ -359,9 +395,13 @@ const Country = ({
                   </Item>
                 </Item.Group>
               </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0 }}>
+              <Grid.Column 
+              //style={{ paddingLeft: 0 }}
+              >
                 <Item.Group relaxed>
-                  <Item style={{ margin: 0 }}>
+                  <Item 
+                  //style={{ margin: 0 }}
+                  >
                     <Item.Content>
                       <Item.Header>Time Zones</Item.Header>
                       <Item.Description>
@@ -372,22 +412,33 @@ const Country = ({
                 </Item.Group>
               </Grid.Column>
             </Grid>
-            <Divider style={{ margin: 0 }} />
-            <Grid style={{ margin: 0 }} columns={3}>
-              <Grid.Row style={{ paddingLeft: 14, paddingBottom: 0 }}>
+            <Divider 
+            //style={{ margin: 0 }} 
+            />
+            <Grid 
+            //style={{ margin: 0 }}
+             columns={3}
+            >
+              <Grid.Row 
+              //style={{ paddingLeft: 14, paddingBottom: 0 }}
+              >
                 <Header>Currencies</Header>
               </Grid.Row>
 
-              <Grid.Column style={{ paddingRight: 4 }}>
+              <Grid.Column
+               //style={{ paddingRight: 4 }}
+               >
                 <Item.Group>
-                  <Item style={{ margin: 0 }}>
+                  <Item 
+                  //style={{ margin: 0 }}
+                  >
                     <Item.Content>
                       <Item.Header> Symbol</Item.Header>
                       <Item.Description>
                         {country.currencies.map((curr) => (
                           <Grid.Row
                             columns={3}
-                            style={{ padding: 0 }}
+                         //   style={{ padding: 0 }}
                             key={curr.symbol}
                             as="h2"
                           >
@@ -399,16 +450,20 @@ const Country = ({
                   </Item>
                 </Item.Group>
               </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0, paddingRight: 0 }}>
+              <Grid.Column 
+              //style={{ paddingLeft: 0, paddingRight: 0 }}
+              >
                 <Item.Group>
-                  <Item style={{ margin: 0 }}>
+                  <Item 
+                  //style={{ margin: 0 }}
+                  >
                     <Item.Content>
                       <Item.Header> Code</Item.Header>
                       <Item.Description>
                         {country.currencies.map((curr) => (
                           <Grid.Row
                             columns={3}
-                            style={{ padding: 0 }}
+                        //    style={{ padding: 0 }}
                             key={curr.code}
                           >
                             {curr.code}
@@ -419,16 +474,20 @@ const Country = ({
                   </Item>
                 </Item.Group>
               </Grid.Column>
-              <Grid.Column style={{ paddingLeft: 0 }}>
+              <Grid.Column 
+              //style={{ paddingLeft: 0 }}
+              >
                 <Item.Group>
-                  <Item style={{ margin: 0 }}>
+                  <Item 
+                  //style={{ margin: 0 }}
+                  >
                     <Item.Content>
                       <Item.Header>Name</Item.Header>
                       <Item.Description>
                         {country.currencies.map((curr) => (
                           <Grid.Row
                             columns={3}
-                            style={{ padding: 0 }}
+                           // style={{ padding: 0 }}
                             key={curr.name}
                           >
                             {curr.name}
@@ -447,7 +506,9 @@ const Country = ({
         {activeTab === 'Weather' && !isLoading ? (
           <>
             {!isWeatherLoading && !isLoading ? (
-              <Card fluid style={{ margin: 0 }}>
+              <Card fluid 
+              //style={{ margin: 0 }}
+              >
                 <Weather
                   weather={weather}
                   unit={unit}

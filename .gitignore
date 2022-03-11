@@ -19,3 +19,4 @@ yarn-error.log*
 
 /src/timeZones.json
 /src/weatherResponseExample.json
+/src/pages/Countries1.js

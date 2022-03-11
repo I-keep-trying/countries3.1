@@ -1,99 +1,109 @@
-import React, { useRef } from 'react'
-import { Menu, Icon, Input } from 'semantic-ui-react'
-import '../assets/css/App.css'
-import { isMobile } from 'react-device-detect'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  Menu,
+  Icon,
+  Input,
+  Label,
+  Container,
+  Message,
+  Button,
+} from 'semantic-ui-react'
+import {
+  toggleUnit,
+  toggleMenu,
+  searchCountries,
+} from '../reducers/countryReducer'
 
-const HeaderNav = ({
-  visible,
-  reset,
-  setMenu,
-  visibilityToggle,
-  input,
-  setInput,
-  countries,
-  isLoading,
-  setIsLoading,
-  setRegion,
-  setActiveRegion,
-  setSubRegion,
-  setActiveSubregion,
-}) => {
-  const inputRef = useRef()
+import '../assets/css/App.css'
+
+const HeaderNav = () => {
+  console.log('Mobile')
+  const [value, setValue] = useState('')
+
+  const show = useSelector((state) => state.menu.show)
+
+  const state = useSelector((state) => state)
+
+  const unit = useSelector((state) => state.unit.unit)
+
+  const dispatch = useDispatch()
+
+  const handleInput = (e) => {
+    e.preventDefault()
+    const input = e.target.value
+    dispatch(searchCountries(input))
+    setValue(input)
+  }
+
+  const noMatch =
+    state.countries.filtered.length === 0 && state.countries.filter.input !== ''
 
   const clearInput = () => {
-    setInput('')
-    setRegion('All')
-    setActiveRegion('All')
-    setSubRegion('')
-    setActiveSubregion('')
+    dispatch(searchCountries(''))
+    setValue('')
   }
 
-  const handleChange = (e) => {
-    if (countries.length === 1) {
-      setRegion('All')
-      setSubRegion('')
-    }
-    if (!inputRef.current) {
-      inputRef.current = e.target
-    }
-
-    !isLoading ? setIsLoading(true) : isLoading
-    setInput(e.target.value)
+  const showHideMenu = () => {
+    dispatch(toggleMenu())
   }
 
-  if (countries.length === 1) {
-    setRegion(countries[0].region)
-    setSubRegion(countries[0].subregion)
-  }
-
-  const closeMobileMenu = () => {
-    reset()
-    visibilityToggle()
-    setMenu(false)
+  const changeUnit = (val) => {
+    dispatch(toggleUnit(val))
   }
 
   return (
     <>
-      <Menu id="nav menu" attached="top" inverted borderless>
-        <Menu.Item style={{ padding: 0 }} header>
-          {visible ? (
-            <Icon
-              name="window close"
-              onClick={closeMobileMenu}
-              rotated="clockwise"
-              color="teal"
-              size="big"
-            />
+      <Menu id="mobile nav menu" attached="top" inverted borderless>
+        <Menu.Item
+          header
+          style={{ paddingRight: 0, paddingLeft: 3 }}
+          onClick={() => showHideMenu()}
+        >
+          {show ? (
+            <Icon name="times" color="teal" size="large" />
           ) : (
-            <Icon
-              name="bars"
-              onClick={visibilityToggle}
-              color="teal"
-              size="big"
-            />
+            <Icon name="sidebar" color="teal" size="large" />
           )}
-          <p> World Countries</p>
+          <p> World Countries Mobile </p>
         </Menu.Item>
-        <Menu.Item>
-          {input.length > 0 ? (
-            <Input
-              icon={<Icon name="close" link onClick={clearInput} />}
-              type="search"
-              value={input}
-              onChange={handleChange}
-            />
-          ) : (
-            <Input
-              icon={<Icon name="search" />}
-              type="search"
-              value={input}
-              onChange={handleChange}
-              placeholder="Start typing to search"
-            />
-          )}
-        </Menu.Item>
-        <Menu.Menu position="right"></Menu.Menu>
+        <Menu.Menu position="right">
+          <Menu.Item onClick={() => changeUnit()}>
+            <Label color="blue">{unit}</Label>
+          </Menu.Item>
+        </Menu.Menu>
       </Menu>
+      <Menu inverted attached vertical fluid>
+        <Menu.Item>
+          <Input
+          inverted
+            size="mini"
+            icon={
+              <Icon
+                link
+                name={value.length > 0 ? 'close' : 'search'}
+                onClick={value.length > 0 ? clearInput : handleInput}
+              />
+            }
+            type="search"
+            value={value}
+            placeholder="Search by name"
+            onChange={handleInput}
+          />
+        </Menu.Item>
+      </Menu>
+      {noMatch ? (
+        <Container>
+          <Message compact info>
+            <Message.Header>No matches, please try again.</Message.Header>
+            <Button basic color="teal" onClick={clearInput}>
+              OK
+            </Button>
+          </Message>
+        </Container>
+      ) : (
+        <></>
+      )}
     </>
   )
 }

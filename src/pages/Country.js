@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Menu, Image, Card, Breadcrumb } from 'semantic-ui-react'
+import { Menu, Image, Card, Breadcrumb, Segment } from 'semantic-ui-react'
 import { getWeather } from '../reducers/weatherReducer'
 import { getTimeZone } from '../reducers/timeZoneReducer'
 import {
@@ -8,11 +8,9 @@ import {
   filterCountriesByRegion,
   filterCountriesBySubRegion,
 } from '../reducers/countryReducer'
-
 import Map from './Map'
 import Weather from '../components/Weather'
 import zoomLevel from '../zoomLevels'
-import './countries.css'
 
 const Country = ({ data }) => {
   const [activeTab, setActiveTab] = useState('Flag')
@@ -42,11 +40,15 @@ const Country = ({ data }) => {
 
   return (
     <>
-      <Menu attached secondary style={{ margin: 0 }}>
-        <Breadcrumb size="small" style={{ marginLeft: 10, paddingTop: 4 }}>
+      <Menu
+        attached
+        secondary
+      >
+        <Breadcrumb
+          size="small"
+        >
           <Breadcrumb.Section
             key="All"
-            style={{ cursor: 'pointer' }}
             link
             onClick={() => dispatch(resetFilter())}
           >
@@ -55,7 +57,6 @@ const Country = ({ data }) => {
           <Breadcrumb.Divider icon="right chevron" />
           <Breadcrumb.Section
             key={data.region}
-            style={{ cursor: 'pointer' }}
             link
             onClick={() => dispatch(filterCountriesByRegion(data.region))}
           >
@@ -66,7 +67,6 @@ const Country = ({ data }) => {
               <Breadcrumb.Divider icon="right chevron" />
               <Breadcrumb.Section
                 key={data.subregion}
-                style={{ cursor: 'pointer' }}
                 link
                 onClick={() =>
                   dispatch(filterCountriesBySubRegion(data.subregion))
@@ -84,7 +84,11 @@ const Country = ({ data }) => {
           )}
         </Breadcrumb>
       </Menu>
-      <Menu attached pointing secondary style={{ margin: 0 }}>
+      <Menu
+        attached
+        pointing
+        secondary
+      >
         <Menu.Item
           name="Flag"
           active={activeTab === 'Flag'}
@@ -107,31 +111,33 @@ const Country = ({ data }) => {
         />
       </Menu>
       {activeTab === 'Flag' ? (
-        <Image
-          src={data.flags.svg}
-          alt="country flag"
-          //    size="large"
-          fluid
-          bordered
-        />
+        <Segment>
+          <Image
+            centered
+            src={data.flags.svg}
+            alt="country flag"
+            size="medium"
+            bordered
+          />
+        </Segment>
       ) : (
         <></>
       )}
       {activeTab === 'CoatOfArms' ? (
         <>
-          <Card>
+          <Segment>
             {Object.entries(data.coatOfArms).length === 0 ? (
               <div>No image available</div>
             ) : (
               <Image
+                centered
                 src={data.coatOfArms.svg}
                 alt="coat of arms"
-                // size="large"
+                size="medium"
                 bordered
-                fluid
               />
             )}
-          </Card>
+          </Segment>
         </>
       ) : (
         <></>
@@ -145,7 +151,10 @@ const Country = ({ data }) => {
       )}
       {activeTab === 'Weather' ? (
         <>
-          <Card fluid style={{ margin: 0 }}>
+          <Card
+            fluid
+            //style={{ margin: 0 }}
+          >
             <Weather country={data} />
           </Card>
           {/*  {!isWeatherLoading && !isLoading ? (

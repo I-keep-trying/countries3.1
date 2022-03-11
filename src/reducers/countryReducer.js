@@ -144,6 +144,7 @@ const countryReducer = (state = [], action) => {
         )
         return { ...toSearch, filtered: filtered }
       } else if (action.region) {
+        console.log('action.region', action.region)
         const selectRegion = {
           ...state,
           filter: { ...state.filter, region: action.region.toLowerCase() },
@@ -178,7 +179,8 @@ const countryReducer = (state = [], action) => {
         const subregionFiltered = selectSubRegion.initialCountries.filter(
           (s) => s.subregion?.toLowerCase() === selectSubRegion.filter.subregion
         )
-        return { ...state, filtered: subregionFiltered }
+        const newState = { ...selectSubRegion, filtered: subregionFiltered }
+        return newState
       } else {
         return state
       }
@@ -210,6 +212,16 @@ export const unitReducer = (state = { unit: 'metric' }, action) => {
   }
 }
 
+export const menuReducer = (state = { show: false }, action) => {
+  switch (action.type) {
+    case 'MENU_TOGGLE':
+      const show = state.show === false ? true : false
+      return { ...state, show: show }
+    default:
+      return state
+  }
+}
+
 /* ------------ Actions ------------- */
 
 export const initializeCountries = () => {
@@ -229,9 +241,17 @@ export const toggleUnit = (unit) => {
   }
 }
 
-export const resetFilter = () => {
+export const toggleMenu = (show) => {
+  return {
+    type: 'MENU_TOGGLE',
+    show: show,
+  }
+}
+
+export const resetFilter = (reset) => {
   return {
     type: 'RESET_FILTER',
+    reset: reset,
   }
 }
 
@@ -250,9 +270,9 @@ export const filterCountries = (country) => {
 }
 
 export const filterCountriesByRegion = (region) => {
+  //console.log('action region', region)
   return {
     type: 'FILTER_COUNTRIES',
-
     region,
   }
 }
@@ -260,7 +280,6 @@ export const filterCountriesByRegion = (region) => {
 export const filterCountriesBySubRegion = (subregion) => {
   return {
     type: 'FILTER_COUNTRIES',
-
     subregion,
   }
 }

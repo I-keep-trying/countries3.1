@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
+import { isMobile } from 'react-device-detect'
 import Countries from './pages/Countries'
+import CountriesMobile from './pages/CountriesMobile'
 import { initializeCountries } from './reducers/countryReducer'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -11,12 +13,18 @@ function App() {
   }, [dispatch])
 
   const countries = useSelector((state) => {
-    //   console.log('state', state)
     return state.countries.initialCountries
   })
-  //console.log('state.countries', countries)
-  return countries !== undefined ? <Countries /> : <></>
-  //  return <></> //countries.length > 0 ? <Countries /> : <></>
+
+  return countries !== undefined ? (
+    isMobile ? (
+      <CountriesMobile />
+    ) : (
+      <Countries />
+    )
+  ) : (
+    <></>
+  )
 }
 
 export default App

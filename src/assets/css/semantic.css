@@ -577,7 +577,7 @@ html {
 }
 
 body {
-/*   padding-top: 3em; */
+  /*   padding-top: 3em; */
   padding-bottom: 0em;
   margin-top: 0em;
   margin-bottom: 6em;
@@ -13873,7 +13873,8 @@ i.icon.youtube.square {
 *******************************/
 
 .ui.image {
-  position: relative;
+  /*   position: relative; */
+  position: static;
   display: inline-block;
   vertical-align: middle;
   max-width: 100%;
@@ -18463,14 +18464,18 @@ ol.ui.horizontal.list li:before,
 *******************************/
 
 .ui.segment {
-  position: relative;
+  /*  position: relative; */
+  position: static;
   background: #ffffff;
   -webkit-box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
-  margin: 1rem 0em;
-  padding: 1em 1em;
-  border-radius: 0.28571429rem;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  /*   margin: 1rem 0em; */
+  margin: 0rem 0em;
+  /*   padding: 1em 1em; */
+  padding: 0em 0em;
+  /* border-radius: 0.28571429rem;
+  border: 1px solid rgba(34, 36, 38, 0.15); */
+  border: 0px solid rgba(34, 36, 38, 0.15);
 }
 
 .ui.segment:first-child {
@@ -23832,14 +23837,14 @@ ol.ui.horizontal.list li:before,
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin: 1rem 0em;
+  /*  margin: 1rem 0em; */
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   background: #ffffff;
   font-weight: normal;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0px solid rgba(34, 36, 38, 0.15);
   -webkit-box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
-  border-radius: 0.28571429rem;
+  /* border-radius: 0.28571429rem; */
   min-height: 2.85714286em;
 }
 
@@ -25726,6 +25731,8 @@ Floated Menu / Item
 
 .ui.item.menu,
 .ui.item.menu .item {
+  background-color: rgb(255, 255, 255);
+
   width: 100%;
   padding-left: 0em !important;
   padding-right: 0em !important;
@@ -25968,8 +25975,8 @@ Floated Menu / Item
   bottom: 0px;
   margin-bottom: 0em;
   top: 0px;
-  margin-top: 1rem;
-  border-radius: 0.28571429rem 0.28571429rem 0em 0em;
+  /*  margin-top: 1rem;
+  border-radius: 0.28571429rem 0.28571429rem 0em 0em; */
 }
 
 .ui.menu[class*='top attached']:first-child {
@@ -26728,7 +26735,7 @@ Floated Menu / Item
   width: 100%;
   background: #ffffff;
   margin: 1em 0em;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 0px solid rgba(34, 36, 38, 0.15);
   -webkit-box-shadow: none;
   box-shadow: none;
   border-radius: 0.28571429rem;
@@ -26760,9 +26767,21 @@ Floated Menu / Item
 
 /* Headers */
 
-.ui.table thead {
+/*
+// Original semantic-ui
+ .ui.table thead {
   -webkit-box-shadow: none;
   box-shadow: none;
+} */
+
+.ui.table thead {
+  position: fixed;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0px;
+  /*   z-index: 0;
+ */
+  display: table;
 }
 
 .ui.table thead th {
@@ -26846,6 +26865,8 @@ Floated Menu / Item
 .ui.table tbody + tbody tr:first-child td {
   border-top: 1px solid rgba(34, 36, 38, 0.1);
 }
+
+/*  */
 
 /* Table Cells */
 
@@ -27763,15 +27784,17 @@ Floated Menu / Item
 }
 
 .ui.sortable.table thead th:hover {
-/*   background: rgba(0, 0, 0, 0.05);
- */  color: rgba(0, 0, 0, 0.8);
+  /*   background: rgba(0, 0, 0, 0.05);
+ */
+  color: rgba(0, 0, 0, 0.8);
 }
 
 /* Sorted */
 
 .ui.sortable.table thead th.sorted {
-/*   background: rgba(0, 0, 0, 0.05);
- */  color: rgba(0, 0, 0, 0.95);
+  /*   background: rgba(0, 0, 0, 0.05);
+ */
+  color: rgba(0, 0, 0, 0.95);
 }
 
 .ui.sortable.table thead th.sorted:after {
@@ -27781,8 +27804,9 @@ Floated Menu / Item
 /* Sorted Hover */
 
 .ui.sortable.table thead th.sorted:hover {
-/*   background: rgba(0, 0, 0, 0.05);
- */  color: rgba(0, 0, 0, 0.95);
+  /*   background: rgba(0, 0, 0, 0.05);
+ */
+  color: rgba(0, 0, 0, 0.95);
 }
 
 /* Inverted */
@@ -40715,3 +40739,39 @@ body.pushable > .pusher {
 /*******************************
          Site Overrides
 *******************************/
+
+#root {
+  position: relative;
+}
+
+#ref {
+  position: absolute;
+}
+
+/* .fixed_header{
+  width: 400px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.fixed_header tbody{
+display:block;
+width: 100%;
+overflow: auto;
+height: 100px;
+}
+
+.fixed_header thead tr {
+ display: block;
+}
+
+.fixed_header thead {
+background: black;
+color:#fff;
+}
+
+.fixed_header th, .fixed_header td {
+padding: 5px;
+text-align: left;
+width: 200px;
+} */
