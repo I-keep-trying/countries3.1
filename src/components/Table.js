@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { isIE } from 'react-device-detect'
 import { Segment, Table, Icon, Image } from 'semantic-ui-react'
 import { filterCountries } from '../reducers/countryReducer'
 import useSortableData from '../services/sortableTable'
 import regions from '../regions'
 
-const CountriesTable = () => {
+const CountriesTable1 = () => {
   const [, setRegion] = useState({
     id: 'FZUe47mEY9PCOzYmMxzYY',
     region: 'All',
@@ -70,24 +71,18 @@ const CountriesTable = () => {
       return <Icon name="caret down" />
     }
   }
+  console.dir('isIE?', isIE)
 
   return (
-    <Segment attached="bottom" style={{ padding: 0, border: 0 }}>
+    <Segment attached="bottom">
       {countriesToRender.length > 1 ? (
         <>
-          <Table
-            sortable
-            compact
-            selectable
-            unstackable
-            size="small"
-            style={{ border: 0 }}
-          >
+          <Table sortable compact selectable unstackable size="small">
             <Table.Header
-              style={
+              id={
                 state.countries.filter.region.toLowerCase() === 'all'
-                  ? { top: 104 }
-                  : { top: 146 }
+                  ? 'one'
+                  : 'two'
               }
             >
               <Table.Row>
@@ -111,18 +106,18 @@ const CountriesTable = () => {
                   const areaConvert = Math.round(item.area / 2.59)
                   return (
                     <Table.Row
-                      style={{ cursor: 'pointer' }}
                       key={item.cca3}
                       onClick={() => handleClick(item)}
                     >
                       <Table.Cell>{item.cca3}</Table.Cell>
                       <Table.Cell>
                         <Image
-                          style={{ position: 'static' }}
+                          srcSet={`${item.flags.svg} 100w`}
                           size="tiny"
-                          src={item.flags.svg}
+                          src={isIE ? item.flags.png : item.flags.svg}
                           alt="country flag"
                           bordered
+                          loading="lazy"
                         />
                       </Table.Cell>
                       <Table.Cell>{item.name.common}</Table.Cell>
@@ -150,5 +145,7 @@ const CountriesTable = () => {
     </Segment>
   )
 }
+
+const CountriesTable = React.memo(CountriesTable1)
 
 export default CountriesTable

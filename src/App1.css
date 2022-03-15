@@ -41,10 +41,8 @@ table th {
   margin-bottom: 1em;
 }
 
-.ui.table thead {
+/* .ui.table thead {
   position: sticky;
   position: -webkit-sticky;
   top: 0px;
-  /*   z-index: 0;
- */
-}
+} */

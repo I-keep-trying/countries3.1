@@ -8,8 +8,8 @@
  * http://opensource.org/licenses/MIT
  *
  */
-@import url('https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin');
-/*!
+/* @import url('https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin');
+ */ /*!
  * # Semantic UI 2.4.0 - Reset
  * http://github.com/semantic-org/semantic-ui/
  *
@@ -7719,6 +7719,7 @@ a.ui.inverted.grey.header:hover {
   font-variant: normal;
   text-decoration: inherit;
   text-transform: none;
+  font-display: swap;
 }
 
 i.icon {
@@ -13004,6 +13005,7 @@ i.icon.youtube.play:before {
   font-variant: normal;
   text-decoration: inherit;
   text-transform: none;
+  font-display: swap;
 }
 
 i.icon.outline {
@@ -13514,6 +13516,7 @@ i.icon.star.empty:before {
   font-variant: normal;
   text-decoration: inherit;
   text-transform: none;
+  font-display: swap;
 }
 
 /* Brand Icon Font Family */
@@ -13874,11 +13877,12 @@ i.icon.youtube.square {
 
 .ui.image {
   /*   position: relative; */
-  position: static;
+  /*   position: static; */
   display: inline-block;
   vertical-align: middle;
   max-width: 100%;
   background-color: transparent;
+  z-index: 0;
 }
 
 img.ui.image {
@@ -13982,6 +13986,16 @@ img.ui.image {
 .ui.bordered.image svg,
 img.ui.bordered.image {
   border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#flag {
+  width: 75%;
+  height: auto;
+}
+
+#coatOfArms {
+  width: 100%;
+  height: auto;
 }
 
 /*--------------
@@ -18467,8 +18481,8 @@ ol.ui.horizontal.list li:before,
   /*  position: relative; */
   position: static;
   background: #ffffff;
-  -webkit-box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
-  box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
+  /* -webkit-box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15); */
+  /*  box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15); */
   /*   margin: 1rem 0em; */
   margin: 0rem 0em;
   /*   padding: 1em 1em; */
@@ -19383,6 +19397,8 @@ ol.ui.horizontal.list li:before,
   -webkit-box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15), none;
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15), none;
   border-radius: 0em 0em 0.28571429rem 0.28571429rem;
+  padding: 0;
+  border: 0;
 }
 
 .ui.segment[class*='bottom attached']:last-child {
@@ -22772,6 +22788,10 @@ ol.ui.horizontal.list li:before,
   box-shadow: 0px 0px 0px 1px #d4d4d5;
 }
 
+#grid-mobile {
+  margin-top: -20px;
+}
+
 .ui.celled.grid > .row {
   width: 100% !important;
   margin: 0em;
@@ -25958,7 +25978,7 @@ Floated Menu / Item
   top: 0px;
   bottom: 0px;
   border-radius: 0px;
-  margin: 0em -1px;
+  /* margin: 0em -1px; */
   width: calc(100% + 2px);
   max-width: calc(100% + 2px);
   -webkit-box-shadow: none;
@@ -26743,6 +26763,7 @@ Floated Menu / Item
   color: rgba(0, 0, 0, 0.87);
   border-collapse: separate;
   border-spacing: 0px;
+  z-index: 999;
 }
 
 .ui.table:first-child {
@@ -26775,12 +26796,37 @@ Floated Menu / Item
 } */
 
 .ui.table thead {
-  position: fixed;
   position: sticky;
   position: -webkit-sticky;
-  top: 0px;
-  /*   z-index: 0;
- */
+  top: 104px;
+  display: table;
+}
+
+#one {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 104px;
+  display: table;
+}
+
+#two {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 146px;
+  display: table;
+}
+
+#oneM {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 53px;
+  display: table;
+}
+
+#twoM {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 146px;
   display: table;
 }
 
@@ -26965,7 +27011,9 @@ Floated Menu / Item
 .ui.table th .image img,
 .ui.table td .image,
 .ui.table td .image img {
-  max-width: none;
+  /*   max-width: none; */
+  width: 100%;
+  height: auto;
 }
 
 /*******************************
@@ -27741,6 +27789,7 @@ Floated Menu / Item
   white-space: nowrap;
   border-left: 1px solid rgba(34, 36, 38, 0.15);
   color: rgba(0, 0, 0, 0.87);
+  background-color: rgb(250, 250, 250);
 }
 
 .ui.sortable.table thead th:first-child {
@@ -40746,6 +40795,28 @@ body.pushable > .pusher {
 
 #ref {
   position: absolute;
+  width: 100%;
+}
+
+.table_rows {
+  cursor: 'pointer';
+}
+
+.table_flags {
+  width: 100%;
+  height: 'auto';
+}
+
+#weather {
+  margin: 0px;
+  border: 0px;
+  box-shadow: none;
+}
+
+#map {
+  position: relative;
+  width: 100%;
+  height: 30em;
 }
 
 /* .fixed_header{

@@ -7,7 +7,7 @@ import Images from '../images/weather-animated/index'
 import '../assets/css/owm-left.css'
 import '../assets/css/owm-right.css'
 
-function WeatherWidget({ country }) {
+function WeatherWidget1({ country }) {
   const [timeDate, setTimeDate] = useState('time zone error')
 
   const unit = useSelector((state) => state.unit.unit)
@@ -181,7 +181,7 @@ function WeatherWidget({ country }) {
         </Segment>
 
         <Segment
-          style={{ margin: 0, border: 0, boxShadow: 'none' }}
+          id="weather"
           floated="right"
         >
           {/* daily forecast day/date headings */}
@@ -383,5 +383,7 @@ function WeatherWidget({ country }) {
     </div>
   )
 }
+
+const WeatherWidget = React.memo(WeatherWidget1)
 
 export default WeatherWidget

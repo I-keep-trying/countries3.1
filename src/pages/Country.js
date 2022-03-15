@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { isIE } from 'react-device-detect'
 import { Menu, Image, Card, Breadcrumb, Segment } from 'semantic-ui-react'
 import { getWeather } from '../reducers/weatherReducer'
 import { getTimeZone } from '../reducers/timeZoneReducer'
@@ -8,11 +9,13 @@ import {
   filterCountriesByRegion,
   filterCountriesBySubRegion,
 } from '../reducers/countryReducer'
-import Map from './Map'
-import Weather from '../components/Weather'
 import zoomLevel from '../zoomLevels'
+import loadable from '@loadable/component'
 
-const Country = ({ data }) => {
+const Map = loadable(() => import('./Map'))
+const Weather = loadable(() => import('../components/Weather'))
+
+const Country1 = ({ data }) => {
   const [activeTab, setActiveTab] = useState('Flag')
 
   const dispatch = useDispatch()
@@ -37,16 +40,10 @@ const Country = ({ data }) => {
   const handleTabClick = (e, { name }) => {
     setActiveTab(name)
   }
-
   return (
     <>
-      <Menu
-        attached
-        secondary
-      >
-        <Breadcrumb
-          size="small"
-        >
+      <Menu attached secondary>
+        <Breadcrumb size="small">
           <Breadcrumb.Section
             key="All"
             link
@@ -84,11 +81,7 @@ const Country = ({ data }) => {
           )}
         </Breadcrumb>
       </Menu>
-      <Menu
-        attached
-        pointing
-        secondary
-      >
+      <Menu attached pointing secondary>
         <Menu.Item
           name="Flag"
           active={activeTab === 'Flag'}
@@ -111,15 +104,14 @@ const Country = ({ data }) => {
         />
       </Menu>
       {activeTab === 'Flag' ? (
-        <Segment>
-          <Image
-            centered
-            src={data.flags.svg}
-            alt="country flag"
-            size="medium"
-            bordered
-          />
-        </Segment>
+        <Image
+          id="flag"
+          centered
+          src={isIE ? data.flags.png : data.flags.svg}
+          alt="country flag"
+          size="medium"
+          bordered
+        />
       ) : (
         <></>
       )}
@@ -130,6 +122,7 @@ const Country = ({ data }) => {
               <div>No image available</div>
             ) : (
               <Image
+                id="coatOfArms"
                 centered
                 src={data.coatOfArms.svg}
                 alt="coat of arms"
@@ -151,14 +144,11 @@ const Country = ({ data }) => {
       )}
       {activeTab === 'Weather' ? (
         <>
-          <Card
-            fluid
-            //style={{ margin: 0 }}
-          >
+          <Card fluid>
             <Weather country={data} />
           </Card>
           {/*  {!isWeatherLoading && !isLoading ? (
-            <Card fluid style={{ margin: 0 }}>
+            <Card fluid>
               <Weather
                 weather={weather}
                 unit={unit}
@@ -177,5 +167,7 @@ const Country = ({ data }) => {
     </>
   )
 }
+
+const Country = React.memo(Country1)
 
 export default Country

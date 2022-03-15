@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 
-const useSortableData = (items) => {
+const useSortableData1 = (items) => {
   const [sortConfig, setSortConfig] = useState({
     key: 'name',
     direction: 'ascending',
@@ -68,6 +68,8 @@ const useSortableData = (items) => {
   return { items: sortedItems, requestSort }
 }
 
-export default useSortableData
+//const useSortableData = React.memo(useSortableData1)
+
+export default useSortableData1
 
 // original table sort code: https://codesandbox.io/s/table-sorting-gxt7g?file=/src/App.js:161-2693

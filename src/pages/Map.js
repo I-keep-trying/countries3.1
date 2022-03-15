@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import H from '@here/maps-api-for-javascript'
 import onResize from 'simple-element-resize-detector'
 
-const Map = ({ lt, lg, zm }) => {
+const Map1 = ({ lt, lg, zm }) => {
   const [map, setMap] = useState(null)
 
   const mapUseRef = useRef()
@@ -44,11 +44,13 @@ const Map = ({ lt, lg, zm }) => {
   return (
     <>
       <div
-        style={{ position: 'relative', width: '100%', height: '300px' }}
+        id="map"
         ref={mapUseRef}
       />
     </>
   )
 }
+
+const Map = React.memo(Map1)
 
 export default Map

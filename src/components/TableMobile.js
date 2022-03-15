@@ -80,15 +80,16 @@ const CountriesTableMobile = () => {
         <>
           <Table sortable compact selectable unstackable>
             <Table.Header
-              style={{
-                top:
-                  state.countries.filter.region.toLowerCase() === 'all'
-                    ? 53
-                    : 146,
-              }}
+              id={
+                state.countries.filter.region.toLowerCase() === 'all'
+                  ? 'oneM'
+                  : 'twoM'
+              }
             ></Table.Header>
           </Table>
-          <Grid celled style={{ marginTop: -20 }}>
+          <Grid
+            celled
+            id="grid-mobile">
             {items.map((item) => {
               const areaConvert = Math.round(item.area / 2.59)
               return (

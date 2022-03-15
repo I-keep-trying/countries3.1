@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { isIE } from 'react-device-detect'
 import {
   Menu,
   Icon,
@@ -13,6 +14,7 @@ import '../assets/css/App.css'
 
 const HeaderNav = () => {
   console.log('Desktop')
+  console.log('isIE?', isIE)
   const [value, setValue] = useState('')
   const unit = useSelector((state) => state.unit.unit)
 

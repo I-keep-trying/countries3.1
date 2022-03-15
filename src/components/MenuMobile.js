@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Menu} from 'semantic-ui-react'
-import { toggleUnit } from '../reducers/countryReducer'
+import { Menu } from 'semantic-ui-react'
 
 import {
   filterCountriesByRegion,

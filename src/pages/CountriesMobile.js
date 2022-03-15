@@ -1,12 +1,14 @@
 import React, { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Sticky, Container, Message, Button } from 'semantic-ui-react'
-import MobileNav from '../components/HeaderMobile'
-import Country from './Country'
-import CountriesTableMobile from '../components/TableMobile'
-import CountriesMenuMobile from '../components/MenuMobile'
 import { resetFilter } from '../reducers/countryReducer'
 import '../App1.css'
+import loadable from '@loadable/component'
+
+const Country = loadable(() => import('./Country'))
+const MobileNav = loadable(() => import('../components/HeaderMobile'))
+const CountriesTableMobile = loadable(() => import('../components/TableMobile'))
+const CountriesMenuMobile = loadable(() => import('../components/MenuMobile'))
 
 const Countries = () => {
   const dispatch = useDispatch()
@@ -27,7 +29,7 @@ const Countries = () => {
 
   return (
     <>
-      <div id="ref" ref={contextRef} style={{ width: '100%' }}>
+      <div id="ref" ref={contextRef}>
         <Sticky id="Sticky" context={contextRef}>
           <MobileNav />
           {countriesFiltered.length === 0 ? (

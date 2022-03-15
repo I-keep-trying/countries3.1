@@ -57,7 +57,6 @@ const HeaderNav = () => {
       <Menu id="mobile nav menu" attached="top" inverted borderless>
         <Menu.Item
           header
-          style={{ paddingRight: 0, paddingLeft: 3 }}
           onClick={() => showHideMenu()}
         >
           {show ? (
@@ -76,7 +75,7 @@ const HeaderNav = () => {
       <Menu inverted attached vertical fluid>
         <Menu.Item>
           <Input
-          inverted
+            inverted
             size="mini"
             icon={
               <Icon

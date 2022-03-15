@@ -1,17 +1,18 @@
 import React, { useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Sticky, Menu } from 'semantic-ui-react'
-import HeaderNav from '../components/Header'
-import Country from './Country'
+import loadable from '@loadable/component'
 import {
   filterCountriesByRegion,
   filterCountriesBySubRegion,
 } from '../reducers/countryReducer'
-import CountriesTable from '../components/Table'
 import regions from '../regions'
 import '../App1.css'
+const HeaderNav = loadable(() => import('../components/Header'))
+const Country = loadable(() => import('./Country'))
+const CountriesTable = loadable(() => import('../components/Table'))
 
-const Countries = () => {
+const Countries1 = () => {
   // 'useState' region/subregion is only being used to identify menu active tab
   const [region, setRegion] = useState({
     id: 'FZUe47mEY9PCOzYmMxzYY',
@@ -54,7 +55,6 @@ const Countries = () => {
               attached="top"
               tabular
               widths={7}
-              style={{ border: 0, backgroundColor: '#fff' }}
             >
               {regions.map((r) => (
                 <Menu.Item
@@ -75,7 +75,6 @@ const Countries = () => {
                   widths={region.subregions.length}
                   attached
                   tabular
-                  style={{ backgroundColor: '#fff' }}
                 >
                   {region.subregions.map((s, i) => (
                     <Menu.Item
@@ -102,4 +101,4 @@ const Countries = () => {
   )
 }
 
-export default Countries
+export default Countries1
