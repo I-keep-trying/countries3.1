@@ -1,6 +1,5 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Switch, Route, useHistory } from 'react-router-dom'
 import { isIE } from 'react-device-detect'
 import { Segment, Table, Icon, Image } from 'semantic-ui-react'
 import { filterCountries } from '../reducers/countryReducer'
