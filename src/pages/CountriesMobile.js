@@ -28,32 +28,30 @@ const Countries = () => {
   const contextRef = useRef()
 
   return (
-    <>
-      <div id="ref" ref={contextRef}>
-        <Sticky id="Sticky" context={contextRef}>
-          <MobileNav />
-          {countriesFiltered.length === 0 ? (
-            <Container>
-              <Message compact info>
-                <Message.Header>No matches, please try again.</Message.Header>
-                <Button basic color="teal" onClick={reset}>
-                  OK
-                </Button>
-              </Message>
-            </Container>
-          ) : (
-            <>
-              {countriesFiltered.length === 1 ? (
-                <Country data={countriesFiltered[0]} />
-              ) : (
-                <>{show ? <CountriesMenuMobile /> : <></>}</>
-              )}
-            </>
-          )}
-        </Sticky>
-        <CountriesTableMobile />
-      </div>
-    </>
+    <div id="ref" ref={contextRef}>
+      <Sticky id="Sticky" context={contextRef}>
+        <MobileNav />
+        {countriesFiltered.length === 0 ? (
+          <Container>
+            <Message compact info>
+              <Message.Header>No matches, please try again.</Message.Header>
+              <Button basic color="teal" onClick={reset}>
+                OK
+              </Button>
+            </Message>
+          </Container>
+        ) : (
+          <>
+            {countriesFiltered.length === 1 ? (
+              <Country data={countriesFiltered[0]} />
+            ) : (
+              <>{show ? <CountriesMenuMobile /> : <></>}</>
+            )}
+          </>
+        )}
+      </Sticky>
+      <CountriesTableMobile />
+    </div>
   )
 }
 

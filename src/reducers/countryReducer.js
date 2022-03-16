@@ -87,6 +87,7 @@ const countryReducer = (state = [], action) => {
         filter: {
           input: '',
           country: '',
+          continent: 'All',
           region: 'All',
           subregion: '',
           reset: false,
@@ -100,6 +101,7 @@ const countryReducer = (state = [], action) => {
           filter: {
             input: '',
             country: '',
+            continent: 'All',
             region: 'All',
             subregion: '',
             reset: false,
@@ -123,6 +125,7 @@ const countryReducer = (state = [], action) => {
               filter: {
                 ...toSearch.filter,
                 country: filtered[0].name.common,
+                continent: filtered[0].continents[0],
                 region: filtered[0].region,
                 subregion: filtered[0].subregion,
               },
@@ -135,6 +138,7 @@ const countryReducer = (state = [], action) => {
           filter: {
             ...state.filter,
             country: action.country.name.common.toLowerCase(),
+            continent: action.country.continents[0].toLowerCase(),
             region: action.country.region,
             subregion: action.country.subregion,
           },
@@ -143,8 +147,36 @@ const countryReducer = (state = [], action) => {
           c.name.common.toLowerCase().startsWith(toSearch.filter.country)
         )
         return { ...toSearch, filtered: filtered }
+      } else if (action.continent) {
+        const selectContinent = {
+          ...state,
+          filter: {
+            ...state.filter,
+            continent: action.continent.toLowerCase(),
+          },
+        }
+        const continentFiltered =
+          selectContinent.filter.continent === 'All'
+            ? selectContinent.initialCountries
+            : selectContinent.initialCountries.filter(
+                (c) =>
+                  c.continents[0].toLowerCase() ===
+                  selectContinent.filter.continent
+              )
+        const countriesFiltered = {
+          ...selectContinent,
+          filtered: continentFiltered,
+          filter: {
+            ...selectContinent.filter,
+            input: '',
+            country: '',
+            continent: action.continent.toLowerCase(),
+            region: 'All',
+            subregion: '',
+          },
+        }
+        return countriesFiltered
       } else if (action.region) {
-        console.log('action.region', action.region)
         const selectRegion = {
           ...state,
           filter: { ...state.filter, region: action.region.toLowerCase() },
@@ -160,13 +192,6 @@ const countryReducer = (state = [], action) => {
         return {
           ...selectRegion,
           filtered: regionFiltered,
-          filter: {
-            ...selectRegion.filter,
-            input: '',
-            country: '',
-            region: action.region.toLowerCase(),
-            subregion: '',
-          },
         }
       } else if (action.subregion) {
         const selectSubRegion = {
@@ -191,6 +216,7 @@ const countryReducer = (state = [], action) => {
         filter: {
           input: '',
           country: '',
+          continent: '',
           region: 'All',
           subregion: '',
           reset: true,
@@ -269,8 +295,14 @@ export const filterCountries = (country) => {
   }
 }
 
+export const filterCountriesByContinent = (continent) => {
+  return {
+    type: 'FILTER_COUNTRIES',
+    continent,
+  }
+}
+
 export const filterCountriesByRegion = (region) => {
-  //console.log('action region', region)
   return {
     type: 'FILTER_COUNTRIES',
     region,

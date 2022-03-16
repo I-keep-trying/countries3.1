@@ -5,7 +5,6 @@ const useSortableData1 = (items) => {
     key: 'name',
     direction: 'ascending',
   })
-
   // set initial sort
   window.localStorage.setItem('sort key', sortConfig.key)
   window.localStorage.setItem('direction', sortConfig.direction)
@@ -40,7 +39,7 @@ const useSortableData1 = (items) => {
           ? a[sortConfig.key].common.localeCompare(b[sortConfig.key].common)
           : b[sortConfig.key].common.localeCompare(a[sortConfig.key].common)
       })
-    } else if (sortConfig.key === 'capital') {
+    } else if (sortConfig.key === 'capital' || sortConfig.key === 'continents') {
       sortableItems.sort((a, b) => {
         return sortConfig.direction === 'ascending'
           ? a[sortConfig.key][0].localeCompare(b[sortConfig.key][0])
@@ -67,8 +66,6 @@ const useSortableData1 = (items) => {
 
   return { items: sortedItems, requestSort }
 }
-
-//const useSortableData = React.memo(useSortableData1)
 
 export default useSortableData1
 

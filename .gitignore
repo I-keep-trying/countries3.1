@@ -20,3 +20,6 @@ yarn-error.log*
 /src/timeZones.json
 /src/weatherResponseExample.json
 /src/pages/Countries1.js
+git.md
+restcountriesv3.1.json
+/src/countriesV3.1-gini.json

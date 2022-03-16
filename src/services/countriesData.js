@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const baseUrl = '/api/countries'
-//const baseUrl = 'https://sheltered-scrubland-08732.herokuapp.com/api/countries'
 const getAll = async () => {
   const response = await axios.get(baseUrl)
   return response.data

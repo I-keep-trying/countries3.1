@@ -3,8 +3,7 @@ import { isMobile } from 'react-device-detect'
 import loadable from '@loadable/component'
 import { initializeCountries } from './reducers/countryReducer'
 import { useDispatch, useSelector } from 'react-redux'
-//import Countries from './pages/Countries'
-//import CountriesMobile from './pages/CountriesMobile'
+
 const Countries = loadable(() => import('./pages/Countries'))
 const CountriesMobile = loadable(() => import('./pages/CountriesMobile'))
 

@@ -1,18 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Switch, Route, useHistory } from 'react-router-dom'
 import { isIE } from 'react-device-detect'
 import { Segment, Table, Icon, Image } from 'semantic-ui-react'
 import { filterCountries } from '../reducers/countryReducer'
 import useSortableData from '../services/sortableTable'
-import regions from '../regions'
 
 const CountriesTable1 = () => {
-  const [, setRegion] = useState({
-    id: 'FZUe47mEY9PCOzYmMxzYY',
-    region: 'All',
-    subregions: [],
-  })
-
   const dispatch = useDispatch()
   const state = useSelector((state) => state)
 
@@ -24,25 +18,8 @@ const CountriesTable1 = () => {
       : state.countries.initialCountries
   })
 
-  const countriesFilteredByRegion = useSelector(
-    (state) => state.countries.filtered
-  )
-
-  const countriesFilteredBySubRegion = useSelector(
-    (state) => state.countries.filtered
-  )
-
-  const countriesToRender =
-    countriesFilteredBySubRegion.length > 0
-      ? countriesFilteredBySubRegion
-      : countriesFilteredByRegion.length > 0
-      ? countriesFilteredByRegion
-      : countriesFiltered
-
   const handleClick = (country) => {
     dispatch(filterCountries(country))
-    const reg = regions.filter((r) => r.region === country.region)
-    setRegion(reg[0])
   }
 
   const tableHeaders = [
@@ -50,13 +27,14 @@ const CountriesTable1 = () => {
     { fieldName: 'Flag', id: 'flag' },
     { fieldName: 'Name', id: 'name' },
     { fieldName: 'Capital', id: 'capital' },
+    { fieldName: 'Continent', id: 'continents' },
     { fieldName: 'Region', id: 'region' },
     { fieldName: 'Subregion', id: 'subregion' },
     { fieldName: 'Population', id: 'population' },
     { fieldName: 'Area km²', id: 'area' },
   ]
 
-  const { items, requestSort } = useSortableData(countriesToRender)
+  const { items, requestSort } = useSortableData(countriesFiltered)
 
   const sortIcons = (id) => {
     if (
@@ -71,11 +49,10 @@ const CountriesTable1 = () => {
       return <Icon name="caret down" />
     }
   }
-  console.dir('isIE?', isIE)
 
   return (
     <Segment attached="bottom">
-      {countriesToRender.length > 1 ? (
+      {countriesFiltered.length > 1 ? (
         <>
           <Table sortable compact selectable unstackable size="small">
             <Table.Header
@@ -109,7 +86,7 @@ const CountriesTable1 = () => {
                       key={item.cca3}
                       onClick={() => handleClick(item)}
                     >
-                      <Table.Cell>{item.cca3}</Table.Cell>
+                      <Table.Cell textAlign="center">{item.cca3}</Table.Cell>
                       <Table.Cell>
                         <Image
                           srcSet={`${item.flags.svg} 100w`}
@@ -124,6 +101,7 @@ const CountriesTable1 = () => {
                       <Table.Cell>
                         {item.capital === undefined ? 'no data' : item.capital}
                       </Table.Cell>
+                      <Table.Cell>{item.continents[0]}</Table.Cell>
                       <Table.Cell>{item.region}</Table.Cell>
                       <Table.Cell>{item.subregion}</Table.Cell>
                       <Table.Cell>

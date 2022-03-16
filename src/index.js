@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
+import { BrowserRouter as Router } from 'react-router-dom'
 import './assets/css/semantic.css'
-import 'react-aspect-ratio/aspect-ratio.css'
 import 'react-app-polyfill/ie11'
 import 'core-js'
 import App from './App'
@@ -10,7 +10,9 @@ import store from './store'
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router>
+      <App />
+    </Router>
   </Provider>,
   document.getElementById('root')
 )

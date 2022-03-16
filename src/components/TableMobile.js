@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid'
 import { filterCountries } from '../reducers/countryReducer'
 import useSortableData from '../services/sortableTable'
 import regions from '../regions'
+import continents from '../continents'
 import '../App1.css'
 
 const CountriesTableMobile = () => {
@@ -26,57 +27,17 @@ const CountriesTableMobile = () => {
       : state.countries.initialCountries
   })
 
-  const countriesFilteredByRegion = useSelector(
-    (state) => state.countries.filtered
-  )
-
-  const countriesFilteredBySubRegion = useSelector(
-    (state) => state.countries.filtered
-  )
-
-  const countriesToRender =
-    countriesFilteredBySubRegion.length > 0
-      ? countriesFilteredBySubRegion
-      : countriesFilteredByRegion.length > 0
-      ? countriesFilteredByRegion
-      : countriesFiltered
-
   const handleClick = (country) => {
     dispatch(filterCountries(country))
     const reg = regions.filter((r) => r.region === country.region)
     setRegion(reg[0])
   }
 
-  const tableHeaders = [
-    { fieldName: 'CCA3', id: 'cca3' },
-    { fieldName: 'Flag', id: 'flag' },
-    { fieldName: 'Name', id: 'name' },
-    { fieldName: 'Capital', id: 'capital' },
-    { fieldName: 'Region', id: 'region' },
-    { fieldName: 'Subregion', id: 'subregion' },
-    { fieldName: 'Population', id: 'population' },
-    { fieldName: 'Area km²', id: 'area' },
-  ]
-
-  const { items, requestSort } = useSortableData(countriesToRender)
-
-  const sortIcons = (id) => {
-    if (
-      window.localStorage.getItem('direction') === 'ascending' &&
-      window.localStorage.getItem('sort key') === id
-    ) {
-      return <Icon name="caret up" />
-    } else if (
-      window.localStorage.getItem('direction') === 'descending' &&
-      window.localStorage.getItem('sort key') === id
-    ) {
-      return <Icon name="caret down" />
-    }
-  }
+  const { items } = useSortableData(countriesFiltered)
 
   return (
     <Segment attached="bottom">
-      {countriesToRender.length > 1 ? (
+      {countriesFiltered.length > 1 ? (
         <>
           <Table sortable compact selectable unstackable>
             <Table.Header
@@ -87,9 +48,7 @@ const CountriesTableMobile = () => {
               }
             ></Table.Header>
           </Table>
-          <Grid
-            celled
-            id="grid-mobile">
+          <Grid celled id="grid-mobile">
             {items.map((item) => {
               const areaConvert = Math.round(item.area / 2.59)
               return (
@@ -123,6 +82,10 @@ const CountriesTableMobile = () => {
                   <Grid.Row>
                     <Grid.Column width={4}>Capital</Grid.Column>
                     <Grid.Column width={12}>{item.capital}</Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={4}>Continent</Grid.Column>
+                    <Grid.Column width={12}>{item.continents[0]}</Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
                     <Grid.Column width={4}>Region</Grid.Column>

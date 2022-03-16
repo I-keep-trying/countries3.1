@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Sticky, Menu } from 'semantic-ui-react'
 import loadable from '@loadable/component'
 import {
+  filterCountriesByContinent,
   filterCountriesByRegion,
   filterCountriesBySubRegion,
 } from '../reducers/countryReducer'
+import continents from '../continents'
 import regions from '../regions'
 import '../App1.css'
 const HeaderNav = loadable(() => import('../components/Header'))
@@ -29,6 +31,14 @@ const Countries1 = () => {
       : state.countries.initialCountries
   })
 
+  const handleContinentClick = (cont) => {
+    dispatch(filterCountriesByContinent(cont.continent))
+    setRegion(cont)
+    if (cont.continent === 'All') {
+      window.localStorage.clear()
+    }
+  }
+
   const handleRegionClick = (reg) => {
     dispatch(filterCountriesByRegion(reg.region))
     setRegion(reg)
@@ -43,6 +53,22 @@ const Countries1 = () => {
 
   const contextRef = useRef()
 
+  useEffect(() => {
+    if (
+      state.countries.filter.region.toLowerCase() !==
+      region.region.toLowerCase()
+    ) {
+      const reg = regions.filter((r) =>
+        r.region.toLowerCase() === state.countries.filter.region.toLowerCase()
+          ? r
+          : null
+      )
+      setRegion(reg[0])
+    } else {
+      return region
+    }
+  }, [state])
+
   return (
     <div id="ref" ref={contextRef}>
       <Sticky id="Sticky" context={contextRef}>
@@ -51,11 +77,21 @@ const Countries1 = () => {
           <Country data={countriesFiltered[0]} />
         ) : (
           <>
-            <Menu
-              attached="top"
-              tabular
-              widths={7}
-            >
+            <Menu attached="top" tabular widths={8}>
+              {continents.map((c) => (
+                <Menu.Item
+                  key={c.id}
+                  active={
+                    state.countries.filter.continent.toLowerCase() ===
+                    c.continent.toLowerCase()
+                  }
+                  onClick={() => handleContinentClick(c)}
+                >
+                  {c.continent === 'All' ? 'All Continents' : c.continent}
+                </Menu.Item>
+              ))}
+            </Menu>
+            <Menu attached tabular widths={7}>
               {regions.map((r) => (
                 <Menu.Item
                   key={r.id}
@@ -71,11 +107,7 @@ const Countries1 = () => {
             </Menu>
             {state.countries.filter.region.toLowerCase() !== 'all' ? (
               <>
-                <Menu
-                  widths={region.subregions.length}
-                  attached
-                  tabular
-                >
+                <Menu widths={region.subregions.length} attached tabular>
                   {region.subregions.map((s, i) => (
                     <Menu.Item
                       key={i}
